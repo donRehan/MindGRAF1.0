@@ -37,7 +37,7 @@ public class ContextSet implements Serializable {
         return contexts.remove(name) != null;
     }
 
-    //Creates an error now as the method doesn't exist yet hence will be commeneted
+    //Add a context into the ContextSet using its name as the key.
     public Context add(Context c) {
         contexts.put(c.getName(), c);
     return c;

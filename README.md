@@ -1,15 +1,18 @@
 # MindGRAF1.0 
+
+> To Be added :: Table of contents
+
 Contexts and Consistency part of the MindGRAF system
 
 NOTE !!
 => Context Class needs to have one unique name identifier and not a list of names
 
-#### General 
+## General 
 - [ ] Add consisteny list to controller instead of Context and come up with an efficient implementation.
 - [ ] Address nodes by Ids in Revision System.
 - [ ] Check Context Creations and adding Propositions Attitudes as well as wether the name is unique or not.
 
-## Context Class
+## Context Class (**TODO LIST**)
 - [ ] isAsserted() a method eventually to check for a hypothesis and say its supported in which attitude in which context. => CH
 - [ ] isSupported. 
 - [ ] allAsserted(). => CH
@@ -21,7 +24,7 @@ NOTE !!
 - [ ] getName.
 - [ ] Function for unique name or is it given by the user ?.
 
-## ContextSet
+## ContextSet (**TODO LIST**)
 - Double check rules for new implementation before proceeding .
 - [x] ContextSet
 - [x] ContextSet(String name)
@@ -29,27 +32,24 @@ NOTE !!
 - [x] getContext(String name)
 - [x] remove(String name)
 - [x] add(context context)
-- [ ] Fix Consturctors to only have one string as the name that identifies the Context
+- [x] Fix Consturctors to only have one string as the name that identifies the Context
 
-## Controller Class
+## Controller Class (**TODO LIST**)
 > To be added later.
 
-## ContextSet
-Document your code here for your bachelor document.
+# ContextSet
+> This is where all Contexts are stored and can be acccessed from the controller class through this class.
 
-### Methods
+## Methods
 
-// Insert Screenshot of the method. 
-Here remove gets the Context by its name and removes it from the ContextSet.
-
-### removing and adding a Context
+#### removing and adding a Context
 ```java
 // given a Context name it removes it from the ContextSet
     public boolean remove(String name) {
         return contexts.remove(name) != null;
     }
 ```
-### Constructing  contextSets
+#### Constructing  contextSets
  ``` java
 //Empty Constructor
     public ContextSet() {
@@ -69,7 +69,7 @@ Here remove gets the Context by its name and removes it from the ContextSet.
     }
 ```
 
-### Adding a Context
+#### Getting a Context
 ```java
 
 //Returns a Context Object given its name.
@@ -77,5 +77,12 @@ Here remove gets the Context by its name and removes it from the ContextSet.
         return contexts.get(name);
     }
 ```
+#### Adding a Context
+```java 
 
-> This section is not finished yet !
+//Add a context into the ContextSet using its name as the key.
+    public Context add(Context c) {
+        contexts.put(c.getName(), c);
+    return c;
+    }
+```
