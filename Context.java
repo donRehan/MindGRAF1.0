@@ -11,7 +11,7 @@ public class Context implements Serializable{
     // Attributes
     // rename to attitudePropositions to be more discreptive 
     private Hashtable<String, PropositionSet> attitudes;
-    private HashSet<String> names;
+    private String name;
     // Each attitude would have its own hypsBitset.
     //rename to attitudeHypotheses to be more discreptive
     private Hashtable<String , BitSet> AttitudesBitset;
@@ -25,6 +25,7 @@ public class Context implements Serializable{
     }
 
     protected Context() {
+		// We shouldn't have a default name hence think of a solution to propose to this.
         names = new HashSet<String>();
         // double check this one too
         this.attitudes = new Hashtable<>(); 
@@ -35,7 +36,7 @@ public class Context implements Serializable{
 
     protected Context(String contextName) {
         this();
-        names.add(contextName);
+        this.name = contextName;
     }
 
     protected Context(Context c) {
@@ -43,14 +44,14 @@ public class Context implements Serializable{
       // Change this too.
         this.attitudes = c.getAttitudesSet();
         // to be created. later
-        this.names = c.getNames();
+        this.name = c.getName();
         // to be created later
         this.AttitudesBitset = c.getAttitudesBitset();
     }
 
     // to create exceptions later ... to add exceptions for wrong attitude etc
     protected Context(Context c, int hyp, String attitude) throws NotAPropositionNodeException, DuplicatePropositionException, NodeNotFoundInNetworkException {
-        this.names = c.getNames();
+        this.name = c.getName();
         this.attitudes = c.getAttitudeslist().add(hyp, attitude);
         BitSet temp = attitudesBitset.get(attitude).clone(); 
         temp.set(hyp);
@@ -59,7 +60,7 @@ public class Context implements Serializable{
 
     protected Context(String contextName, Context c) {
         this(c);
-        this.names.add(contextName);
+        this.name.add(contextName);
     }
 
     protected Context(String contextName, PropositionSet hyps, String attitude) throws NotAPropositionNodeException, NodeNotFoundInNetworkException {
@@ -78,9 +79,8 @@ public class Context implements Serializable{
         return this.attitudes.get(attitude);
     }
 
-    //Will be renamed to getName and have ONLY ONE name per Context
-    protected HashSet<String> getNames() {
-        return names;
+    protected String getName() {
+        return this.name;
     }
 
     // to be revised and adjusted as its from AI and all the functions beneath
