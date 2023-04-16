@@ -7,12 +7,20 @@ Contexts and Consistency part of the MindGRAF system
 NOTE !!
 => Context Class needs to have one unique name identifier and not a list of names
 
+As per last meeting here is the reason for HypsBitset in previous implementation.
+```
+hypsBitSet:
+hypsBitset is a private attribute of type BitSet.
+It stores all the propositions that are in the hyps in it as binary 1’s at indices corresponding the ids of these hyps.
+It is generated every time a Context is constructed.
+```
 ## General 
 - [ ] Add consisteny list to controller instead of Context and come up with an efficient implementation.
 - [ ] Address nodes by Ids in Revision System.
 - [ ] Check Context Creations and adding Propositions Attitudes as well as wether the name is unique or not.
 
 ## Context Class (**TODO LIST**)
+To be revised as it seems a bit vague at the moment for me.
 - [ ] isAsserted() a method eventually to check for a hypothesis and say its supported in which attitude in which context. => CH
 - [ ] isSupported. 
 - [ ] allAsserted(). => CH
@@ -21,8 +29,8 @@ NOTE !!
 - [ ] addNames.
 - [ ] removeName.
 // Correct Part
-- [ ] getName.
-- [ ] Function for unique name or is it given by the user ?.
+- [x] getName.
+- [ ] Handled Context Creations with unqiue names.
 
 ## ContextSet (**TODO LIST**)
 - Double check rules for new implementation before proceeding .
