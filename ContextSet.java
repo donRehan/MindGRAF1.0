@@ -2,7 +2,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Hashtable;
 
-//Send the mail to Dr Nourhan Cotaining your Bachelor
 //Some method were not written in his bachelor so check when done other methods.
 //Adding a context must have NAME hence check with the constructors this issue
 
