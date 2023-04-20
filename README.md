@@ -24,13 +24,6 @@ To be revised as it seems a bit vague at the moment for me.
 - [ ] isAsserted() a method eventually to check for a hypothesis and say its supported in which attitude in which context. => CH
 - [ ] isSupported. 
 - [ ] allAsserted(). => CH
-//  The three below were of the same style of the previous implementation called JavaSneps and Hence will also be dealt with.
-- [ ] addName.
-- [ ] addNames.
-- [ ] removeName.
-// Correct Part
-- [x] getName.
-- [ ] Handled Context Creations with unqiue names.
 
 ## ContextSet (**TODO LIST**)
 - Double check rules for new implementation before proceeding .
