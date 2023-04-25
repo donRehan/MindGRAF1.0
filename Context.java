@@ -13,18 +13,17 @@ public class Context implements Serializable{
     private Hashtable<String, PropositionSet> attitudes;
     private String name;
     private Hashtable<String , BitSet> AttitudesBitset;
-    // To be moved into Controller
-    //private ArrayList<ArrayList<String>> consistencies;
 	
 	// Constructor
-	// Name should be set by the controller
-	protected Context(){
+	protected Context(String name){
+	this.name = name;
 	this.attitudes = new Hashtable<String, PropositionSet>();
 	this.AttitudesBitset = new Hashtable<String, BitSet>();
 	}
 
 	//Consturctor with an attitude
-	protected Context(Hashtable<String, PropositionSet> attitudes){
+	protected Context(Hashtable<String, PropositionSet> attitudes, String name){
+	this.name = name;
 	this.attitudes = attitudes;
 	//for each String in Hashtable attitudes, create a new BitSet representing the propositions in the PropositionSet
 	for (String key : attitudes.keySet()){
