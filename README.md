@@ -20,7 +20,8 @@ It is generated every time a Context is constructed.
 - [ ] Check Context Creations and adding Propositions Attitudes as well as wether the name is unique or not.
 
 ## Context Class (**TODO LIST**)
-To be revised as it seems a bit vague at the moment for me.
+Mainly a getter class for attributes of a context.
+More details to be added later.
 - [ ] isAsserted() a method eventually to check for a hypothesis and say its supported in which attitude in which context. => CH
 - [ ] isSupported. 
 - [ ] allAsserted(). => CH
