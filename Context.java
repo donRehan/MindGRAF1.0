@@ -1,8 +1,3 @@
-// Create a method eventually to check for a hypothesis and say its supported in which attitude in which context.
-// Check for keyword later as it contains uncompleted tasks
-// chatGpt means check in asap with chatGPT
-// Rename what needs to be renamed once all the methods have been finished.
-
 import java.io.Serializable;
 import java.util.*;
 
@@ -55,5 +50,56 @@ public class Context implements Serializable{
 	protected String getName(){
 		return this.name;
 	}
+
+	    /**
+     * Checks if a propositions is asserted in this Attitude
+     *
+     * @param p the proposition to be checked for assertion.
+     * @return <code>true</code> if the proposition exists, otherwise <code>false</code>
+     * @throws NotAPropositionNodeException   If the node p is not a proposition.
+     * @throws NodeNotFoundInNetworkException If the node p doesn't exist in the network.
+     */
+    public boolean isAsserted(PropositionNode p, Attitude att) {
+        int hyp = p.getId();
+		PropositionSet hyps = this.attitudes.get(att);
+        return Arrays.binarySearch(PropositionSet.getPropsSafely(hyps), hyp) > 0
+                || isSupported(p, att);
+    }
+
+    public boolean isSupported(PropositionNode node, Attitude att) {
+		PropositionSet hyps = this.attitudes.get(att);
+        Collection<PropositionSet> assumptionSet = node.getBasicSupport()
+                .getAssumptionBasedSupport()
+                .values();
+        for (PropositionSet assumptionHyps : assumptionSet) {
+            if (assumptionHyps.isSubSet(hyps)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+	/*
+	* Returns a list of all proposition nodes that are asserted in this context given attitude
+	* @param att the attitude to be checked for assertion
+	* @return a list of all proposition nodes that are asserted in this context given attitude
+	*/
+	public PropositionSet allAsserted(Attitude att){
+        Collection<PropositionNode> allPropositionNodes = Network.getPropositionNodes().values();
+        PropositionSet asserted = new PropositionSet();
+		PropositionSet props = this.attitudes.get(att);
+        int[] hyps;
+        hyps = PropositionSet.getPropsSafely(props);
+        for (PropositionNode node : allPropositionNodes) {
+            if (Arrays.binarySearch(hyps, node.getId()) > 0) {
+                asserted = asserted.add(node.getId());
+            } else if (isSupported(node,att)) {
+                asserted = asserted.add(node.getId());
+            }
+        }
+
+        return asserted;
+    }
+
 
 }

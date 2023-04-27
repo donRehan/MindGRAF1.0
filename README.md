@@ -22,9 +22,10 @@ It is generated every time a Context is constructed.
 ## Context Class (**TODO LIST**)
 Mainly a getter class for attributes of a context.
 More details to be added later.
-- [ ] isAsserted() a method eventually to check for a hypothesis and say its supported in which attitude in which context. => CH
-- [ ] isSupported. 
-- [ ] allAsserted(). => CH
+- [x] isAsserted() a method eventually to check for a hypothesis and say its supported in which attitude in which context. => CH
+- [x] isSupported. 
+- [ ] listwithDependencies().
+- [x] allAsserted().
 
 ## ContextSet (**TODO LIST**)
 - Double check rules for new implementation before proceeding .
