@@ -24,7 +24,6 @@ Mainly a getter class for attributes of a context.
 More details to be added later.
 - [x] isAsserted() a method eventually to check for a hypothesis and say its supported in which attitude in which context. => CH
 - [x] isSupported. 
-- [ ] listwithDependencies().
 - [x] allAsserted().
 
 ## ContextSet (**TODO LIST**)
