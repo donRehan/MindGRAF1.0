@@ -87,4 +87,74 @@ public class Controller{
                 //modify this after fixing addProps method first to mindGRAF
 		return addPropsToContext(contextName, attitudes);
 	}
+
+
+	/**
+	 * Asserts a hyp in an existing Context
+	 *
+	 * @param contextName the name of the context to assert the hyp in
+	 * @param hyp         the hyp to be asserted
+	 * @return a new Context object containing the old Context with the hyp asserted
+	 *         in it
+	 * @throws ContextNameDoesntExistException if no Context with this name exists
+	 *                                         in SNeBr's ContextSet
+	 * @throws DuplicatePropositionException   if the hyp to be asserted in the
+	 *                                         Context is already asserted
+	 * @throws NodeNotFoundInNetworkException throws ContextNameDoesntExistException, NotAPropositionNodeException, DuplicatePropositionException,
+			NodeNotFoundInNetworkException, ContradictionFoundException 
+	 */
+	public static Context addPropToContext(String contextName,String att, int hyp)
+			{
+		Context oldContext = contextSet.getContext(contextName);
+
+		//fix when exceptions are handled.
+		if (oldContext == null)
+			throw new ContextNameDoesntExistException(contextName);
+
+		//Context temp = new Context(contextName,
+		//		new PropositionSet(PropositionSet.getPropsSafely(oldContext.getHypothesisSet())));
+
+		// Implement this first so you can continue.
+		ArrayList<NodeSet> contradictions = checkForContradiction((PropositionNode) Network.getNodeById(hyp), temp,
+				false);
+
+		if (contradictions != null) {
+			conflictingContext = contextName;
+			conflictingHyps = new PropositionSet(new int[] { hyp });
+			throw new ContradictionFoundException(contradictions);
+		}
+
+		PropositionNode node = (PropositionNode) Network.getNodeById(hyp);
+		node.setHyp(true);
+		PropositionSet hypSet = oldContext.getHypothesisSet().add(hyp);
+
+		Context newContext = new Context(contextName, hypSet);
+
+		return contextSet.add(newContext);
+	}
+
+
+	/**
+	 * Checks if some node's addition to a context c introduces a contradiction.
+	 *
+	 * @param node
+	 * @param c
+	 * @param skipCache This is a boolean flag to allow skipping the cache checking
+	 *                  stage. It is useful for testing purposes only, for now.
+	 * @return
+	 * @throws NodeNotFoundInNetworkException
+	 * @throws DuplicatePropositionException
+	 * @throws NotAPropositionNodeException
+	 */
+	//Not finished.
+	public static ArrayList<NodeSet> checkForContradiction(PropositionNode node, Context c, boolean skipCache)
+			throws NodeNotFoundInNetworkException, DuplicatePropositionException, NotAPropositionNodeException {
+
+		if (c.getNames().contains(conflictingContext)) {
+			checkForContradictionCore(node, c, true);
+			return checkForContradictionCore(node, c, false);
+		}
+
+		return checkForContradictionCore(node, c, skipCache);
+	}
 }
