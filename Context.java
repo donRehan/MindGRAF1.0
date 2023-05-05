@@ -1,3 +1,10 @@
+import sneps.exceptions.DuplicatePropositionException;
+import sneps.exceptions.NodeNotFoundInNetworkException;
+import sneps.exceptions.NotAPropositionNodeException;
+import sneps.network.Network;
+import sneps.network.PropositionNode;
+import sneps.network.classes.setClasses.PropositionSet;
+
 import java.io.Serializable;
 import java.util.*;
 
@@ -17,17 +24,31 @@ public class Context implements Serializable{
 	}
 
 	//Consturctor with an attitude
-	protected Context(Hashtable<String, PropositionSet> attitudes, String name){
+	protected Context(Hashtable<String, PropositionSet> attitudes, String name) throws NotAPropositionNodeException, NodeNotFoundInNetworkException {
 	this.name = name;
 	this.attitudes = attitudes;
 	//for each String in Hashtable attitudes, create a new BitSet representing the propositions in the PropositionSet
 	for (String key : attitudes.keySet()){
+    PropositionSet current_props = this.attitudes.get(key);
 		BitSet bitset = new BitSet();
-		PropositionSet propSet = attitudes.get(key);
-		for (Proposition prop : propSet.getPropsSafely()){
-			bitset.set(prop.getId());
-		}
-		AttitudesBitset.put(key, bitset);
+    if(current_props != null)
+    {
+		int[] arr = PropositionSet.getPropsSafely(current_props);
+    //Set bitset of the current attitude to true for each proposition in the PropositionSet
+    for (int i = 0; i < arr.length; i++){
+            bitset.set(arr[i]);
+        }
+    //add bitset then rest its value
+    this.AttitudesBitset.put(key, bitset);
+    bitset = new BitSet();
+
+    }
+    else{
+        //set bitset to null if the PropositionSet is null
+        this.AttitudesBitset.put(key, null);
+        continue;
+      }
+
 	}
 	}
 	//Methods
@@ -102,4 +123,26 @@ public class Context implements Serializable{
     }
 
 
+  // Create the main class to test some stuff 
+
+  public static void main(String[] args) {
+
+    // Initiate proposition nodes correctly please
+    PropositionNode p1 = new PropositionNode("p1");
+    PropositionNode p2 = new PropositionNode("p2");
+    PropositionNode p3 = Network.defineProposition("p3");
+    
+    PropositionSet props = new PropositionSet();
+    props = props.add(p1.getId()).add(p2.getId()).add(p3.getId());
+    // create a PropositionSet object with some dummy data
+    PropositionSet props = new PropositionSet();
+    props = props.add("p1").add("p2").add("p3");
+
+    // create a Hashtable object with some dummy data
+    Hashtable<String, PropositionSet> attitudes = new Hashtable<>();
+    attitudes.put("a1", props);
+
+    // create a Context object with the above data
+    Context context = new Context(attitudes, "context1");
+    } 
 }
