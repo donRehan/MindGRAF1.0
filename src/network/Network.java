@@ -27,6 +27,7 @@ public class Network {
 	private static HashMap<String, Node> molecularNodes;
 	private static HashMap<String, Node> baseNodes;
 	private static HashMap<String,Relation> relations; 
+	private static HashMap<Integer,PropositionNode> propositionNodes ; 
 	private static MyClassCreator classCreator;
 	public static HashMap<String, String> quantifiers = new HashMap<String, String>();
 
@@ -35,6 +36,7 @@ public class Network {
 		molecularNodes = new HashMap<String, Node>();
 		classCreator = new MyClassCreator();
 		baseNodes = new HashMap<String,Node>();
+		propositionNodes = new HashMap<Integer,PropositionNode>();
 	}
 	
 	// first constructor for molecular nodes
@@ -49,8 +51,12 @@ public class Network {
 			
 			switch (SemanticType.toLowerCase()) {
 			case "propositionnode":
+			
+				PropositionNode pnode = new PropositionNode(downCableSet);
 				node = new PropositionNode(downCableSet);
+				propositionNodes.put(Integer.valueOf(pnode.getId()),pnode);
 				break;
+			
 			case "actnode":
 				node = new ActNode(downCableSet);
 				break;
@@ -86,6 +92,7 @@ public class Network {
 		switch (SemanticType.toLowerCase()) {
 		case "propositionnode":
 			node = new PropositionNode(name, false);
+			propositionNodes.put(node.getId(),(PropositionNode)node);
 			break;
 		case "actnode":
 			node = new ActNode(name, false);
@@ -114,6 +121,7 @@ public class Network {
 			switch (SemanticType.toLowerCase()) {
 			case "propositionnode":
 				node = new PropositionNode(name, true);
+				propositionNodes.put(node.getId(),(PropositionNode)node);
 				break;
 			case "actnode":
 				node = new ActNode(name, true);
@@ -178,6 +186,9 @@ public class Network {
 
 	public static HashMap<String, String> getQuantifiers() {
 		return quantifiers;
+	}
+	public static HashMap<Integer,PropositionNode> getPropositionNodes(){
+		return propositionNodes;
 	}
 
 	public static void setQuantifiers(HashMap<String, String> quantifiers) {

@@ -12,23 +12,23 @@ public class Context implements Serializable{
     
     // Attributes
     // rename to attitudePropositions to be more discreptive 
-    private Hashtable<String, PropositionNodeSet> attitudes;
+    private Hashtable< Integer, PropositionNodeSet> attitudes;
     private String name;
-    private Hashtable<String , BitSet> AttitudesBitset;
+    private Hashtable<Integer , BitSet> AttitudesBitset;
 	
 	// Constructor
 	protected Context(String name){
 	this.name = name;
-	this.attitudes = new Hashtable<String, PropositionNodeSet>();
-	this.AttitudesBitset = new Hashtable<String, BitSet>();
+	this.attitudes = new Hashtable<Integer, PropositionNodeSet>();
+	this.AttitudesBitset = new Hashtable<Integer, BitSet>();
 	}
 
 	//Consturctor with an attitude
-	protected Context(Hashtable<String, PropositionNodeSet> attitudes, String name) {
+	protected Context(Hashtable<Integer, PropositionNodeSet> attitudes, String name) {
 	this.name = name;
 	this.attitudes = attitudes;
 	//for each String in Hashtable attitudes, create a new BitSet representing the propositions in the PropositionNodeSet
-	for (String key : attitudes.keySet()){
+	for (Integer key : attitudes.keySet()){
     PropositionNodeSet current_props = this.attitudes.get(key);
 		BitSet bitset = new BitSet();
     if(current_props != null)
@@ -55,14 +55,14 @@ public class Context implements Serializable{
 	//Methods
 	
 	//Retrieve PropositionNodeSet of an attitude
-	protected PropositionNodeSet getAttitude_propositions(String attitude){
+	protected PropositionNodeSet getAttitude_propositions(Integer attitude){
 		return this.attitudes.get(attitude);
 	}
 
 	//return all keys of attitudes hashtable in a list
-	protected ArrayList<String> getAttitudes(){
-		ArrayList<String> attitudes = new ArrayList<String>();
-		for (String key : this.attitudes.keySet()){
+	protected ArrayList<Integer> getAttitudes(){
+		ArrayList<Integer> attitudes = new ArrayList<Integer>();
+		for (Integer key : this.attitudes.keySet()){
 			attitudes.add(key);
 		}
 		return attitudes;
@@ -81,14 +81,14 @@ public class Context implements Serializable{
      * @throws NotAPropositionNodeException   If the node p is not a proposition.
      * @throws NodeNotFoundInNetworkException If the node p doesn't exist in the network.
      */
-    public boolean isAsserted(PropositionNode p, String att) {
+    public boolean isAsserted(PropositionNode p, Integer att) {
         int hyp = p.getId();
 		PropositionNodeSet hyps = this.attitudes.get(att);
         return Arrays.binarySearch(PropositionNodeSet.getPropsSafely(hyps), hyp) > 0
                 || isSupported(p, att);
     }
 
-    public boolean isSupported(PropositionNode node, String att) {
+    public boolean isSupported(PropositionNode node, Integer att) {
 		PropositionNodeSet hyps = this.attitudes.get(att);
 		//Support Needed
         Collection<PropositionNodeSet> assumptionSet = node.getBasicSupport()
@@ -108,7 +108,7 @@ public class Context implements Serializable{
 	* @return a list of all proposition nodes that are asserted in this context given attitude
 	*/
 	// Support Needed
-	public PropositionNodeSet allAsserted(String att){
+	public PropositionNodeSet allAsserted(Integer att){
         Collection<PropositionNode> allPropositionNodes = Network.getPropositionNodes().values();
         PropositionNodeSet asserted = new PropositionNodeSet();
 		PropositionNodeSet props = this.attitudes.get(att);

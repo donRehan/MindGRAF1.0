@@ -1,4 +1,4 @@
-// ANY METHODS THAT DEALS WITH PROPOSITIIONS SHOULD INCLUDE CONSISTENCIES LIST CHECK FIRST
+package context;
 import java.util.*;
 
 public class Controller{
@@ -7,6 +7,7 @@ public class Controller{
 //    private static ArrayList<BitSet> minimalNoGoods = new ArrayList<>();
 //    private static String conflictingContext = null;
     //private static PropositionSet conflictingHyps;
+	// Set that takes care of names of attitudes
     private static Hashtable<String, ArrayList<String>> consistencies = new Hashtable<String , ArrayList<String>>();
     
     //Consistencies list dictatation
