@@ -1,9 +1,8 @@
+package context; 
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Hashtable;
-
-//Some method were not written in his bachelor so check when done other methods.
-//Adding a context must have NAME hence check with the constructors this issue
 
 public class ContextSet implements Serializable {
 

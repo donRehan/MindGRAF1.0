@@ -1,9 +1,9 @@
-import sneps.exceptions.DuplicatePropositionException;
-import sneps.exceptions.NodeNotFoundInNetworkException;
-import sneps.exceptions.NotAPropositionNodeException;
-import sneps.network.Network;
-import sneps.network.PropositionNode;
-import sneps.network.classes.setClasses.PropositionSet;
+package context;
+
+import network.Network;
+import nodes.Node;
+import nodes.PropositionNode;
+import set.PropositionNodeSet;
 
 import java.io.Serializable;
 import java.util.*;
@@ -12,29 +12,30 @@ public class Context implements Serializable{
     
     // Attributes
     // rename to attitudePropositions to be more discreptive 
-    private Hashtable<String, PropositionSet> attitudes;
+    private Hashtable<String, PropositionNodeSet> attitudes;
     private String name;
     private Hashtable<String , BitSet> AttitudesBitset;
 	
 	// Constructor
 	protected Context(String name){
 	this.name = name;
-	this.attitudes = new Hashtable<String, PropositionSet>();
+	this.attitudes = new Hashtable<String, PropositionNodeSet>();
 	this.AttitudesBitset = new Hashtable<String, BitSet>();
 	}
 
 	//Consturctor with an attitude
-	protected Context(Hashtable<String, PropositionSet> attitudes, String name) throws NotAPropositionNodeException, NodeNotFoundInNetworkException {
+	protected Context(Hashtable<String, PropositionNodeSet> attitudes, String name) {
 	this.name = name;
 	this.attitudes = attitudes;
-	//for each String in Hashtable attitudes, create a new BitSet representing the propositions in the PropositionSet
+	//for each String in Hashtable attitudes, create a new BitSet representing the propositions in the PropositionNodeSet
 	for (String key : attitudes.keySet()){
-    PropositionSet current_props = this.attitudes.get(key);
+    PropositionNodeSet current_props = this.attitudes.get(key);
 		BitSet bitset = new BitSet();
     if(current_props != null)
     {
-		int[] arr = PropositionSet.getPropsSafely(current_props);
-    //Set bitset of the current attitude to true for each proposition in the PropositionSet
+    //Need to set the exception handling below to shut this off
+		int[] arr = PropositionNodeSet.getPropsSafely(current_props);
+    //Set bitset of the current attitude to true for each proposition in the PropositionNodeSet
     for (int i = 0; i < arr.length; i++){
             bitset.set(arr[i]);
         }
@@ -44,7 +45,7 @@ public class Context implements Serializable{
 
     }
     else{
-        //set bitset to null if the PropositionSet is null
+        //set bitset to null if the PropositionNodeSet is null
         this.AttitudesBitset.put(key, null);
         continue;
       }
@@ -53,8 +54,8 @@ public class Context implements Serializable{
 	}
 	//Methods
 	
-	//Retrieve PropositionSet of an attitude
-	protected PropositionSet getAttitude_propositions(String attitude){
+	//Retrieve PropositionNodeSet of an attitude
+	protected PropositionNodeSet getAttitude_propositions(String attitude){
 		return this.attitudes.get(attitude);
 	}
 
@@ -80,19 +81,20 @@ public class Context implements Serializable{
      * @throws NotAPropositionNodeException   If the node p is not a proposition.
      * @throws NodeNotFoundInNetworkException If the node p doesn't exist in the network.
      */
-    public boolean isAsserted(PropositionNode p, Attitude att) {
+    public boolean isAsserted(PropositionNode p, String att) {
         int hyp = p.getId();
-		PropositionSet hyps = this.attitudes.get(att);
-        return Arrays.binarySearch(PropositionSet.getPropsSafely(hyps), hyp) > 0
+		PropositionNodeSet hyps = this.attitudes.get(att);
+        return Arrays.binarySearch(PropositionNodeSet.getPropsSafely(hyps), hyp) > 0
                 || isSupported(p, att);
     }
 
-    public boolean isSupported(PropositionNode node, Attitude att) {
-		PropositionSet hyps = this.attitudes.get(att);
-        Collection<PropositionSet> assumptionSet = node.getBasicSupport()
+    public boolean isSupported(PropositionNode node, String att) {
+		PropositionNodeSet hyps = this.attitudes.get(att);
+		//Support Needed
+        Collection<PropositionNodeSet> assumptionSet = node.getBasicSupport()
                 .getAssumptionBasedSupport()
                 .values();
-        for (PropositionSet assumptionHyps : assumptionSet) {
+        for (PropositionNodeSet assumptionHyps : assumptionSet) {
             if (assumptionHyps.isSubSet(hyps)) {
                 return true;
             }
@@ -105,17 +107,18 @@ public class Context implements Serializable{
 	* @param att the attitude to be checked for assertion
 	* @return a list of all proposition nodes that are asserted in this context given attitude
 	*/
-	public PropositionSet allAsserted(Attitude att){
+	// Support Needed
+	public PropositionNodeSet allAsserted(String att){
         Collection<PropositionNode> allPropositionNodes = Network.getPropositionNodes().values();
-        PropositionSet asserted = new PropositionSet();
-		PropositionSet props = this.attitudes.get(att);
+        PropositionNodeSet asserted = new PropositionNodeSet();
+		PropositionNodeSet props = this.attitudes.get(att);
         int[] hyps;
-        hyps = PropositionSet.getPropsSafely(props);
+        hyps = PropositionNodeSet.getPropsSafely(props);
         for (PropositionNode node : allPropositionNodes) {
             if (Arrays.binarySearch(hyps, node.getId()) > 0) {
-                asserted = asserted.add(node.getId());
+                asserted.add(node.getId());
             } else if (isSupported(node,att)) {
-                asserted = asserted.add(node.getId());
+                asserted.add(node.getId());
             }
         }
 
@@ -127,22 +130,21 @@ public class Context implements Serializable{
 
   public static void main(String[] args) {
 
-    // Initiate proposition nodes correctly please
-    PropositionNode p1 = new PropositionNode("p1");
-    PropositionNode p2 = new PropositionNode("p2");
-    PropositionNode p3 = Network.defineProposition("p3");
-    
-    PropositionSet props = new PropositionSet();
-    props = props.add(p1.getId()).add(p2.getId()).add(p3.getId());
-    // create a PropositionSet object with some dummy data
-    PropositionSet props = new PropositionSet();
-    props = props.add("p1").add("p2").add("p3");
+    //// Initiate proposition nodes
+    //Node X = Network.createVariableNode("p1", "propositionnode");
 
-    // create a Hashtable object with some dummy data
-    Hashtable<String, PropositionSet> attitudes = new Hashtable<>();
-    attitudes.put("a1", props);
+    //
+    //PropositionNodeSet props = new PropositionNodeSet();
+    //props = props.add(p1.getId()).add(p2.getId()).add(p3.getId());
+    //// create a PropositionNodeSet object with some dummy data
+    //PropositionNodeSet props = new PropositionNodeSet();
+    //props = props.add("p1").add("p2").add("p3");
 
-    // create a Context object with the above data
-    Context context = new Context(attitudes, "context1");
+    //// create a Hashtable object with some dummy data
+    //Hashtable<String, PropositionNodeSet> attitudes = new Hashtable<>();
+    //attitudes.put("a1", props);
+
+    //// create a Context object with the above data
+    //Context context = new Context(attitudes, "context1");
     } 
 }
