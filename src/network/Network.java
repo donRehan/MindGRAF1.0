@@ -432,13 +432,13 @@ public class Network {
 		ComposePath pCompose2 = new ComposePath(pF5,pF4);
 		
 		
-		LinkedList <Object[]> s  = p3.follow(M3,new PathTrace(),new Context());
-		Path p4 = new KPlusPath(p3);
-		LinkedList <Object[]> s2  = p4.follow(M3,new PathTrace(),new Context());
+//		LinkedList <Object[]> s  = p3.follow(M3,new PathTrace(),new Context());
+//		Path p4 = new KPlusPath(p3);
+//		LinkedList <Object[]> s2  = p4.follow(M3,new PathTrace(),new Context());
 		
-		for (Object[] object : s) {
-			System.out.println(object[0]);
-		}
+//		for (Object[] object : s) {
+//			System.out.println(object[0]);
+//		}
 		
 		AndPath and  = new AndPath(pCompose);
 		AndPath and2  = new AndPath(pCompose2);

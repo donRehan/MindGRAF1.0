@@ -27,6 +27,7 @@ public class Context implements Serializable{
 	protected Context(Hashtable<Integer, PropositionNodeSet> attitudes, String name) {
 	this.name = name;
 	this.attitudes = attitudes;
+	this.AttitudesBitset = new Hashtable<Integer, BitSet>();
 	//for each String in Hashtable attitudes, create a new BitSet representing the propositions in the PropositionNodeSet
 	for (Integer key : attitudes.keySet()){
     PropositionNodeSet current_props = this.attitudes.get(key);
@@ -81,6 +82,9 @@ public class Context implements Serializable{
      * @throws NotAPropositionNodeException   If the node p is not a proposition.
      * @throws NodeNotFoundInNetworkException If the node p doesn't exist in the network.
      */
+	
+	/* Support Needed first
+
     public boolean isAsserted(PropositionNode p, Integer att) {
         int hyp = p.getId();
 		PropositionNodeSet hyps = this.attitudes.get(att);
@@ -102,11 +106,9 @@ public class Context implements Serializable{
         return false;
     }
 
-	/*
 	* Returns a list of all proposition nodes that are asserted in this context given attitude
 	* @param att the attitude to be checked for assertion
 	* @return a list of all proposition nodes that are asserted in this context given attitude
-	*/
 	// Support Needed
 	public PropositionNodeSet allAsserted(Integer att){
         Collection<PropositionNode> allPropositionNodes = Network.getPropositionNodes().values();
@@ -124,27 +126,72 @@ public class Context implements Serializable{
 
         return asserted;
     }
+	*/
+
+	public Hashtable<Integer , BitSet> getAttitudesBitset(){
+		return this.AttitudesBitset;
+	}
 
 
   // Create the main class to test some stuff 
 
   public static void main(String[] args) {
 
-    //// Initiate proposition nodes
-    //Node X = Network.createVariableNode("p1", "propositionnode");
+	// Initialize Network :: Important for all tests
+	Network network = new Network();
+	// Testing Context(name) constructor :: Works
+	/*
+	Context context = new Context("Test");
+    System.out.println("Context name: " + context.getName());
+    System.out.println("Attitudes: " + context.getAttitudes());
+    System.out.println("Attitudes Bitset: " + context.getAttitudesBitset());
+	
+	*/
 
-    //
-    //PropositionNodeSet props = new PropositionNodeSet();
-    //props = props.add(p1.getId()).add(p2.getId()).add(p3.getId());
-    //// create a PropositionNodeSet object with some dummy data
-    //PropositionNodeSet props = new PropositionNodeSet();
-    //props = props.add("p1").add("p2").add("p3");
+	// Testing Context(attitudes, name) constructor :: Works
+	
+        // create some PropositionNodeSets
+        PropositionNodeSet pns1 = new PropositionNodeSet();
+        Node base1 = Network.createNode("base1", "propositionnode");
+        Node base2 = Network.createNode("base2", "propositionnode");
+        pns1.add((PropositionNode)base1);
+        pns1.add((PropositionNode)base2);
+        PropositionNodeSet pns2 = new PropositionNodeSet();
+        Node base3 = Network.createNode("base3", "propositionnode");
+        Node base4 = Network.createNode("base4", "propositionnode");
+        pns2.add((PropositionNode)base3);
+        pns2.add((PropositionNode)base4);
+        
+        // create Hashtable with the PropositionNodeSets
+        Hashtable<Integer, PropositionNodeSet> attitudes = new Hashtable<Integer, PropositionNodeSet>();
+        attitudes.put(1, pns1);
+        attitudes.put(2, pns2);
+        
+        // create a new Context object
+        Context context = new Context(attitudes, "myContext");
 
-    //// create a Hashtable object with some dummy data
-    //Hashtable<String, PropositionNodeSet> attitudes = new Hashtable<>();
-    //attitudes.put("a1", props);
+		//Testing getAttitude_propositions(attitude) :: Works !
+        //PropositionNodeSet attitude1Props = context.getAttitude_propositions(2);
+        //System.out.println("Propositions in Attitude 1: " + attitude1Props);
 
-    //// create a Context object with the above data
-    //Context context = new Context(attitudes, "context1");
+		//Testing getAttitudes() :: Works !
+		//ArrayList<Integer> attitudesList = context.getAttitudes();
+		//System.out.println("Attitudes: " + attitudesList);
+		
+		//Testing getName() :: Works !
+		
+		//Testing getAttitudesBitset :: Works !
+		//Hashtable<Integer, BitSet> attitudesBitset = context.getAttitudesBitset();
+		//System.out.println(context.getAttitudesBitset().get(2));
+        
+	/*
+        // print out the result
+        System.out.println(context.name);
+        for (Integer key : context.attitudes.keySet()) {
+            System.out.println("Attitude " + key + ": " + context.attitudes.get(key));
+            System.out.println("Bitset for Attitude " + key + ": " + context.AttitudesBitset.get(key));
+        }
+	*/
+
     } 
 }
