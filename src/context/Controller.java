@@ -2,11 +2,11 @@ package context;
 import java.util.*;
 
 public class Controller{
-//    private static String currContext = "default";
-//    private static ContextSet contextSet = new ContextSet(currContext);
-//    private static ArrayList<BitSet> minimalNoGoods = new ArrayList<>();
-//    private static String conflictingContext = null;
-    //private static PropositionSet conflictingHyps;
+    private static String currContext = "default";
+    private static ContextSet contextSet = new ContextSet(currContext);
+    private static ArrayList<BitSet> minimalNoGoods = new ArrayList<>();
+    private static String conflictingContext = null;
+    private static PropositionSet conflictingHyps;
 	// Set that takes care of names of attitudes
     private static Hashtable<String, ArrayList<String>> consistencies = new Hashtable<String , ArrayList<String>>();
     
