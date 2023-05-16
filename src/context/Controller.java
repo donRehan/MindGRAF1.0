@@ -1,4 +1,7 @@
 package context;
+
+import nodes.*;
+import  set.PropositionNodeSet;
 import java.util.*;
 
 public class Controller{
@@ -6,8 +9,8 @@ public class Controller{
     private static ContextSet contextSet = new ContextSet(currContext);
     private static ArrayList<BitSet> minimalNoGoods = new ArrayList<>();
     private static String conflictingContext = null;
-    private static PropositionSet conflictingHyps;
-	// Set that takes care of names of attitudes
+    private static PropositionNodeSet conflictingHyps;
+	private static Hashtable<Integer, String > attitudeNames = new Hashtable<Integer, String>();
     private static Hashtable<String, ArrayList<String>> consistencies = new Hashtable<String , ArrayList<String>>();
     
     //Consistencies list dictatation
@@ -110,32 +113,28 @@ public void addConsistency(String attitudeName, String consistency) {
 //	}
 //
 //
-//	/**
-//	 * Creates a new Context given its name and a set of hyps, and adds it to
-//	 * SNeBR's ContextSet.
-//	 *
-//	 * @param contextName name of the Context to be created
-//	 * @param hyps        the set of hyps to be asserted in this Context
-//	 * @return the created Context
-//	 * @throws DuplicateContextNameException if a Context with this name exists in
-//	 *                                       SNeBr's ContextSet
-//         * 
-//        throws DuplicateContextNameException,
-//	ContradictionFoundException, NotAPropositionNodeException, NodeNotFoundInNetworkException,
-//	ContextNameDoesntExistException, DuplicatePropositionException, NodeNotFoundInPropSetException 
-//         *
-//	 */
-//	public static Context createContext(Hashtable<String, PropositionSet> attitudes, String name){
-//		if (contextSet.getContext(contextName) != null) {
-//			//throw new DuplicateContextNameException(contextName);
-//		}
-//
-//		Context newContext = new Context(contextName);
-//		contextSet.add(newContext);
-//
-//                //modify this after fixing addProps method first to mindGRAF
-//		return addPropsToContext(contextName, attitudes);
-//	}
+	public void setCurrentContext(String contextName)
+	{
+		Context context = contextSet.getContext(contextName);
+		if(context == null)
+			throw new RuntimeException("Context with name '" + contextName + "' doesn't exist !");
+		currContext = contextName; 
+	}
+
+	public Context getCurrentContext()
+	{
+		return contextSet.getContext(currContext);
+	}
+
+	public static Context createContext(Hashtable<Integer, PropositionNodeSet> attitudes, String name){
+		if (contextSet.getContext(name) != null) {
+			throw new RuntimeException("Context with name '" + name + "' already exists !");
+		}
+
+		Context newContext = new Context(attitudes,name);
+		contextSet.add(newContext);
+	}
+
 //
 //
 //	/**
@@ -152,35 +151,32 @@ public void addConsistency(String attitudeName, String consistency) {
 //	 * @throws NodeNotFoundInNetworkException throws ContextNameDoesntExistException, NotAPropositionNodeException, DuplicatePropositionException,
 //			NodeNotFoundInNetworkException, ContradictionFoundException 
 //	 */
-//	public static Context addPropToContext(String contextName,String att, int hyp)
-//			{
-//		Context oldContext = contextSet.getContext(contextName);
-//
-//		//fix when exceptions are handled.
-//		if (oldContext == null)
-//			throw new ContextNameDoesntExistException(contextName);
-//
-//		//Context temp = new Context(contextName,
-//		//		new PropositionSet(PropositionSet.getPropsSafely(oldContext.getHypothesisSet())));
-//
-//		// Implement this first so you can continue.
-//		ArrayList<NodeSet> contradictions = checkForContradiction((PropositionNode) Network.getNodeById(hyp), temp,
-//				false);
-//
-//		if (contradictions != null) {
-//			conflictingContext = contextName;
-//			conflictingHyps = new PropositionSet(new int[] { hyp });
-//			throw new ContradictionFoundException(contradictions);
-//		}
-//
-//		PropositionNode node = (PropositionNode) Network.getNodeById(hyp);
-//		node.setHyp(true);
-//		PropositionSet hypSet = oldContext.getHypothesisSet().add(hyp);
-//
-//		Context newContext = new Context(contextName, hypSet);
-//
-//		return contextSet.add(newContext);
-//	}
+	public static Context addPropToContext(String contextName,Integer att, int hyp)
+			{
+		Context context = contextSet.getContext(contextName);
+		if (context == null)
+			throw new RuntimeException("Context with name '" + contextName + "' doesn't exist !");
+
+		if (!(context.getAttitudes().contains(att)))
+        	throw new RuntimeException("attitude doesn't exist in the context !");
+
+		ArrayList<NodeSet> contradictions = checkForContradiction((PropositionNode) Network.getNodeById(hyp), temp,
+				false);
+
+		if (contradictions != null) {
+			conflictingContext = contextName;
+			conflictingHyps = new PropositionSet(new int[] { hyp });
+			throw new ContradictionFoundException(contradictions);
+		}
+
+		PropositionNode node = (PropositionNode) Network.getNodeById(hyp);
+		node.setHyp(true);
+		PropositionSet hypSet = oldContext.getHypothesisSet().add(hyp);
+
+		Context newContext = new Context(contextName, hypSet);
+
+		return contextSet.add(newContext);
+	}
 //
 //
 //	/**
