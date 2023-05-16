@@ -60,27 +60,15 @@ public void addConsistency(String attitudeName, String consistency) {
         return false;
     }
 
-//	/**
-//	 * Creates a new Context given its name and adds it to SNeBR's ContextSet.
-//	 * @param contextName the name of the Context to be created
-//	 * @return the newly Created Context object
-//	 * @throws DuplicateContextNameException If a context with the same name exists
-//	 */
-//	public static Context createContext(String contextName) {
-//                // if a context already exists with that name then throw  an error
-//		if (contextSet.getContext(contextName) != null){
-//			//throw new DuplicateContextNameException(contextName);
-//                 }
-//
-//		Context c = new Context(contextName);
-//		return contextSet.add(c);
-//	}
-//
-//	/**
-//	 * Creates a new empty Context
-//	 *
-//	 * @return new Context object
-//	 */
+	public static Context createContext(String contextName) {
+        // if a context already exists with that name then throw  an error
+		if (contextSet.getContext(contextName) != null){
+			throw new RuntimeException("Context with name '" + contextName + "' already exists !");
+                 }
+		Context c = new Context(contextName);
+		return contextSet.add(c);
+	}
+
 //	public static Context createContext() {
 //		return new Context();
 //	}
@@ -135,22 +123,6 @@ public void addConsistency(String attitudeName, String consistency) {
 		contextSet.add(newContext);
 	}
 
-//
-//
-//	/**
-//	 * Asserts a hyp in an existing Context
-//	 *
-//	 * @param contextName the name of the context to assert the hyp in
-//	 * @param hyp         the hyp to be asserted
-//	 * @return a new Context object containing the old Context with the hyp asserted
-//	 *         in it
-//	 * @throws ContextNameDoesntExistException if no Context with this name exists
-//	 *                                         in SNeBr's ContextSet
-//	 * @throws DuplicatePropositionException   if the hyp to be asserted in the
-//	 *                                         Context is already asserted
-//	 * @throws NodeNotFoundInNetworkException throws ContextNameDoesntExistException, NotAPropositionNodeException, DuplicatePropositionException,
-//			NodeNotFoundInNetworkException, ContradictionFoundException 
-//	 */
 	public static Context addPropToContext(String contextName,Integer att, int hyp)
 			{
 		Context context = contextSet.getContext(contextName);
