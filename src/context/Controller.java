@@ -35,6 +35,18 @@ public class Controller{
             attitudeConsistencies.add(consistency);
         }
     }
+	
+	//Create a method that returns which attitude a propositionNode belongs to
+	public static Integer getAttitudeName(Integer prop, Context c){
+		Hashtable<Integer, BitSet> temp = c.getAttitudesBitset();
+		//Iterate through the attitudes and check if the propositionNode is in the attitude
+		for (Integer key : temp.keySet()){
+			//If the propositionNode is in the attitude then return the name of the attitude
+			if (temp.get(key).get(prop)){
+				return key;
+			}
+		}
+	}
 
     /*
      *
@@ -120,7 +132,7 @@ public void addConsistency(String attitudeName, String consistency) {
 		}
 
 		Context newContext = new Context(attitudes,name);
-		contextSet.add(newContext);
+		return contextSet.add(newContext);
 	}
 
 	public static Context addPropToContext(String contextName,Integer att, int hyp)
@@ -131,6 +143,11 @@ public void addConsistency(String attitudeName, String consistency) {
 
 		if (!(context.getAttitudes().contains(att)))
         	throw new RuntimeException("attitude doesn't exist in the context !");
+
+		// Context temp = new Context(contextName,
+		PropositionNodeSet tempProps = new PropositionNodeSet(PropositionNodeSet.getPropsSafely(context.getAttitude_propositions(att)));
+		Hashtable <Integer, PropositionNodeSet> temp = new Hashtable<Integer, PropositionNodeSet>();
+		temp.put(att, tempProps);
 
 		ArrayList<NodeSet> contradictions = checkForContradiction((PropositionNode) Network.getNodeById(hyp), temp,
 				false);
