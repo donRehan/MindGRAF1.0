@@ -8,8 +8,9 @@ import java.util.*;
 
 public class Controller{
     private static String currContext = "default";
+
     private static ContextSet contextSet = new ContextSet(currContext);
-    private static ArrayList<BitSet> minimalNoGoods = new ArrayList<>();
+    //private static ArrayList<BitSet> minimalNoGoods = new ArrayList<>();
     private static String conflictingContext = null;
     private static PropositionNodeSet conflictingHyps;
 	private static Hashtable<Integer, String > attitudeNames = new Hashtable<Integer, String>();
@@ -24,6 +25,10 @@ public class Controller{
         consistencies.put(attitudeName, new ArrayList<String>());
     }
     }
+
+	public void setAutomaticBR(boolean automaticBR) {
+		Controller.automaticBR = automaticBR;
+	}
 
     //Adding a consistency to an attitude
     public void addConsistency(String attitudeName, String consistency) {
@@ -111,37 +116,20 @@ public void addConsistency(String attitudeName, String consistency) {
 		return contextSet.add(newContext);
 	}
 
-//	public static Context addPropToContext(String contextName,Integer att, int hyp)
-//			{
-//		Context context = contextSet.getContext(contextName);
-//		if (context == null)
-//			throw new RuntimeException("Context with name '" + contextName + "' doesn't exist !");
-//
-//		if (!(context.getAttitudes().contains(att)))
-//        	throw new RuntimeException("attitude doesn't exist in the context !");
-//
-//		// Context temp = new Context(contextName,
-//		PropositionNodeSet tempProps = new PropositionNodeSet(PropositionNodeSet.getPropsSafely(context.getAttitude_propositions(att)));
-//		Hashtable <Integer, PropositionNodeSet> temp = new Hashtable<Integer, PropositionNodeSet>();
-//		temp.put(att, tempProps);
-//
-//		ArrayList<NodeSet> contradictions = checkForContradiction((PropositionNode) Network.getNodeById(hyp), temp,
-//				false);
-//
-//		if (contradictions != null) {
-//			conflictingContext = contextName;
-//			conflictingHyps = new PropositionSet(new int[] { hyp });
-//			throw new ContradictionFoundException(contradictions);
-//		}
-//
-//		PropositionNode node = (PropositionNode) Network.getNodeById(hyp);
-//		node.setHyp(true);
-//		PropositionSet hypSet = oldContext.getHypothesisSet().add(hyp);
-//
-//		Context newContext = new Context(contextName, hypSet);
-//
-//		return contextSet.add(newContext);
-//	}
+	public void printContexts() {
+    System.out.println("Contexts:");
+    for (Context context : contextSet.getContexts().values()) {
+        System.out.println(context.getName());
+    }
+	}
+
+	public static void clearRevision() {
+    contextSet = new ContextSet();
+    //minimalNoGoods = new Hashtable<>();
+    currContext = "default";
+}
+
+
 	public static boolean isAutomaticBR() {
 		return automaticBR;
 	}
@@ -149,6 +137,36 @@ public void addConsistency(String attitudeName, String consistency) {
 	public static Context getContextByName(String contextName) {
 		return contextSet.getContext(contextName);
 	}
+
+	public boolean removeContext(String contextName) {
+		return contextSet.remove(contextName);
+	}
+
+	public String contextToString(String contextName) {
+    Context context = contextSet.getContext(contextName);
+    if (context == null) {
+        return "Context not found: " + contextName;
+    }
+    
+    StringBuilder sb = new StringBuilder();
+    sb.append("Context: ").append(context.getName()).append("\n");
+    
+    // Iterate over the attitudes in the context
+    for (Integer attitude : context.getAttitudes()) {
+        sb.append("Attitude ").append(attitude).append(": ");
+        
+        // Retrieve the PropositionNodeSet for the attitude
+        PropositionNodeSet propositionNodeSet = context.getAttitude_propositions(attitude);
+        
+        // Convert the PropositionNodeSet to a string representation
+        String propositions = propositionNodeSet != null ? propositionNodeSet.toString() : "Empty";
+        
+        sb.append(propositions).append("\n");
+    }
+    
+    return sb.toString();
+}
+
 //
 //	/**
 //	 * Checks if some node's addition to a context c introduces a contradiction.
@@ -175,8 +193,6 @@ public void addConsistency(String attitudeName, String consistency) {
 //	}
     //Create a main method for testing purposes
     public static void main(String[] args) {
-    // create a new Controller instance
-    Controller controller = new Controller();
     // add some consistencies
     //controller.addConsistency("attitude1", "consistency1");
     //controller.addConsistency("attitude1", "consistency2");
@@ -195,6 +211,8 @@ public void addConsistency(String attitudeName, String consistency) {
     //System.out.println("Attitude 1 consistencies: " + attitude1Consistencies);
 	//
 	
+    // create a new Controller instance
+    Controller controller = new Controller();
 	Network network = new Network();
 	// create a new context
     PropositionNodeSet pns1 = new PropositionNodeSet();
@@ -216,23 +234,55 @@ public void addConsistency(String attitudeName, String consistency) {
 	//works !
 	System.out.println(attitudeNames.get(1));
 
+	// Print the initial list of contexts
+	System.out.println("Initial list of contexts:");
+	controller.printContexts();
+
+	// Remove the context with the specified name
+	//fails as its wrong and doesn't exist
+	//boolean removed = controller.removeContext("myContext");
+	//boolean removed = controller.removeContext("testContext");
+
+	//if (removed) {
+    //System.out.println("Context 'myContext' removed successfully.");
+	//} else {
+    //System.out.println("Failed to remove context 'myContext'.");
+	//}
+	//System.out.println("Updated list of contexts:");
+	//controller.printContexts();
+
+	//Testing Context to String method
+	
+	System.out.println("=======================");
+	System.out.println("=======================");
+
+	String contextString = controller.contextToString("testContext");
+	System.out.println(contextString);
+
+
+
     // Test the getAttitudeName method
-    try {
-        Integer attitudeName = context.getPropositionAttitude(base2.getId());
-        System.out.println("Attitude Id: " + attitudeName);
-    } catch (RuntimeException e) {
-        System.out.println(e.getMessage());
-    }
+//    try {
+//        Integer attitudeName = context.getPropositionAttitude(base2.getId());
+//        System.out.println("Attitude Id: " + attitudeName);
+//    } catch (RuntimeException e) {
+//        System.out.println(e.getMessage());
+//    }
+//
+//	String attitudename = controller.getPropositionAttitudename(base2.getId(), context);
+//	// Check if the output matches the expected value
+//	if (attitudename.equals("imaginary world")) {
+//	    System.out.println("Output is correct: " + attitudename);
+//	} else {
+//	    System.out.println("Output is incorrect. Expected: imaginary world, Actual: " + attitudename);
+//	}
 
-	String attitudename = controller.getPropositionAttitudename(base2.getId(), context);
-	// Check if the output matches the expected value
-	if (attitudename.equals("imaginary world")) {
-	    System.out.println("Output is correct: " + attitudename);
-	} else {
-	    System.out.println("Output is incorrect. Expected: imaginary world, Actual: " + attitudename);
-	}
-
-	// Test the getAttitudeName method
+	// Testing SetAutomatic BR method :: Works !
+//	System.out.println("Initial value of automaticBR: " + Controller.isAutomaticBR());
+//	// Call the setAutomaticBR method to change the value to true
+//	controller.setAutomaticBR(true);
+//	// Print the updated value of automaticBR
+//	System.out.println("Updated value of automaticBR: " + Controller.isAutomaticBR());
 
     }
 }
