@@ -1,7 +1,9 @@
 package context;
 
-import nodes.*;
-import  set.PropositionNodeSet;
+import network.Network;
+import nodes.Node;
+import nodes.PropositionNode;
+import set.PropositionNodeSet;
 import java.util.*;
 
 public class Controller{
@@ -12,6 +14,7 @@ public class Controller{
     private static PropositionNodeSet conflictingHyps;
 	private static Hashtable<Integer, String > attitudeNames = new Hashtable<Integer, String>();
     private static Hashtable<String, ArrayList<String>> consistencies = new Hashtable<String , ArrayList<String>>();
+    private static boolean automaticBR = false;
     
     //Consistencies list dictatation
     //Add an attitude to the consistencies list
@@ -36,17 +39,12 @@ public class Controller{
         }
     }
 	
-	//Create a method that returns which attitude a propositionNode belongs to
-	public static Integer getAttitudeName(Integer prop, Context c){
-		Hashtable<Integer, BitSet> temp = c.getAttitudesBitset();
-		//Iterate through the attitudes and check if the propositionNode is in the attitude
-		for (Integer key : temp.keySet()){
-			//If the propositionNode is in the attitude then return the name of the attitude
-			if (temp.get(key).get(prop)){
-				return key;
-			}
-		}
+	public String getPropositionAttitudename(Integer prop,Context c){
+		//get the key value from the  attitudeNames hashtable
+		System.out.println(c.getPropositionAttitude(prop));
+		return attitudeNames.get(c.getPropositionAttitude(prop));
 	}
+
 
     /*
      *
@@ -72,7 +70,7 @@ public void addConsistency(String attitudeName, String consistency) {
         return false;
     }
 
-	public static Context createContext(String contextName) {
+	public Context createContext(String contextName) {
         // if a context already exists with that name then throw  an error
 		if (contextSet.getContext(contextName) != null){
 			throw new RuntimeException("Context with name '" + contextName + "' already exists !");
@@ -85,34 +83,12 @@ public void addConsistency(String attitudeName, String consistency) {
 //		return new Context();
 //	}
 //
-//	/**
-//	 * Clears the global data strctures of SNeBR
-//	 */
-//	public static void clearSNeBR() {
-//		contextSet.clear();
-//		minimalNoGoods.clear();
-//		currContext = "default";
-//		contextSet.add(new Context(currContext));
-//	}
 //
-//
-//	/**
-//	 * Removes a context from SNeBR's ContextSet.
-//	 *
-//	 * @param contextName name of the context desired to be removed
-//	 * @return <code>true</code> if a context with this name exists,
-//	 *         <code>false</code> otherwise
-//	 */
-//	public static boolean removeContext(String contextName) {
-//		Context c = contextSet.getContext(contextName);
-//		if (c == null)
-//			return false;
-//
-//		boolean bool = c.removeName(contextName);
-//		return contextSet.remove(contextName) && bool;
-//	}
-//
-//
+	
+	public static Context getContext(String contextName) {
+		return contextSet.getContext(contextName);
+	}
+	
 	public void setCurrentContext(String contextName)
 	{
 		Context context = contextSet.getContext(contextName);
@@ -126,7 +102,7 @@ public void addConsistency(String attitudeName, String consistency) {
 		return contextSet.getContext(currContext);
 	}
 
-	public static Context createContext(Hashtable<Integer, PropositionNodeSet> attitudes, String name){
+	public Context createContext(Hashtable<Integer, PropositionNodeSet> attitudes, String name){
 		if (contextSet.getContext(name) != null) {
 			throw new RuntimeException("Context with name '" + name + "' already exists !");
 		}
@@ -135,38 +111,44 @@ public void addConsistency(String attitudeName, String consistency) {
 		return contextSet.add(newContext);
 	}
 
-	public static Context addPropToContext(String contextName,Integer att, int hyp)
-			{
-		Context context = contextSet.getContext(contextName);
-		if (context == null)
-			throw new RuntimeException("Context with name '" + contextName + "' doesn't exist !");
-
-		if (!(context.getAttitudes().contains(att)))
-        	throw new RuntimeException("attitude doesn't exist in the context !");
-
-		// Context temp = new Context(contextName,
-		PropositionNodeSet tempProps = new PropositionNodeSet(PropositionNodeSet.getPropsSafely(context.getAttitude_propositions(att)));
-		Hashtable <Integer, PropositionNodeSet> temp = new Hashtable<Integer, PropositionNodeSet>();
-		temp.put(att, tempProps);
-
-		ArrayList<NodeSet> contradictions = checkForContradiction((PropositionNode) Network.getNodeById(hyp), temp,
-				false);
-
-		if (contradictions != null) {
-			conflictingContext = contextName;
-			conflictingHyps = new PropositionSet(new int[] { hyp });
-			throw new ContradictionFoundException(contradictions);
-		}
-
-		PropositionNode node = (PropositionNode) Network.getNodeById(hyp);
-		node.setHyp(true);
-		PropositionSet hypSet = oldContext.getHypothesisSet().add(hyp);
-
-		Context newContext = new Context(contextName, hypSet);
-
-		return contextSet.add(newContext);
-	}
+//	public static Context addPropToContext(String contextName,Integer att, int hyp)
+//			{
+//		Context context = contextSet.getContext(contextName);
+//		if (context == null)
+//			throw new RuntimeException("Context with name '" + contextName + "' doesn't exist !");
 //
+//		if (!(context.getAttitudes().contains(att)))
+//        	throw new RuntimeException("attitude doesn't exist in the context !");
+//
+//		// Context temp = new Context(contextName,
+//		PropositionNodeSet tempProps = new PropositionNodeSet(PropositionNodeSet.getPropsSafely(context.getAttitude_propositions(att)));
+//		Hashtable <Integer, PropositionNodeSet> temp = new Hashtable<Integer, PropositionNodeSet>();
+//		temp.put(att, tempProps);
+//
+//		ArrayList<NodeSet> contradictions = checkForContradiction((PropositionNode) Network.getNodeById(hyp), temp,
+//				false);
+//
+//		if (contradictions != null) {
+//			conflictingContext = contextName;
+//			conflictingHyps = new PropositionSet(new int[] { hyp });
+//			throw new ContradictionFoundException(contradictions);
+//		}
+//
+//		PropositionNode node = (PropositionNode) Network.getNodeById(hyp);
+//		node.setHyp(true);
+//		PropositionSet hypSet = oldContext.getHypothesisSet().add(hyp);
+//
+//		Context newContext = new Context(contextName, hypSet);
+//
+//		return contextSet.add(newContext);
+//	}
+	public static boolean isAutomaticBR() {
+		return automaticBR;
+	}
+
+	public static Context getContextByName(String contextName) {
+		return contextSet.getContext(contextName);
+	}
 //
 //	/**
 //	 * Checks if some node's addition to a context c introduces a contradiction.
@@ -196,20 +178,61 @@ public void addConsistency(String attitudeName, String consistency) {
     // create a new Controller instance
     Controller controller = new Controller();
     // add some consistencies
-    controller.addConsistency("attitude1", "consistency1");
-    controller.addConsistency("attitude1", "consistency2");
-    controller.addConsistency("attitude2", "consistency3");
+    //controller.addConsistency("attitude1", "consistency1");
+    //controller.addConsistency("attitude1", "consistency2");
+    //controller.addConsistency("attitude2", "consistency3");
 
-    // check if the consistencies were added correctly
-    ArrayList<String> attitude1Consistencies = controller.getConsistenciesForAttitude("attitude1");
-    ArrayList<String> attitude2Consistencies = controller.getConsistenciesForAttitude("attitude2");
+    //// check if the consistencies were added correctly
+    //ArrayList<String> attitude1Consistencies = controller.getConsistenciesForAttitude("attitude1");
+    //ArrayList<String> attitude2Consistencies = controller.getConsistenciesForAttitude("attitude2");
 
-    System.out.println("Attitude 1 consistencies: " + attitude1Consistencies);
-    System.out.println("Attitude 2 consistencies: " + attitude2Consistencies);
-    // try to add a consistency that already exists
-    controller.addConsistency("attitude1", "consistency1");
+    //System.out.println("Attitude 1 consistencies: " + attitude1Consistencies);
+    //System.out.println("Attitude 2 consistencies: " + attitude2Consistencies);
+    //// try to add a consistency that already exists
+    //controller.addConsistency("attitude1", "consistency1");
 
-    // check if the consistency was added despite already existing
-    System.out.println("Attitude 1 consistencies: " + attitude1Consistencies);
+    //// check if the consistency was added despite already existing
+    //System.out.println("Attitude 1 consistencies: " + attitude1Consistencies);
+	//
+	
+	Network network = new Network();
+	// create a new context
+    PropositionNodeSet pns1 = new PropositionNodeSet();
+    Node base1 = Network.createNode("base1", "propositionnode");
+    Node base2 = Network.createNode("base2", "propositionnode");
+    pns1.add((PropositionNode)base1);
+    pns1.add((PropositionNode)base2);
+    PropositionNodeSet pns2 = new PropositionNodeSet();
+    Node base3 = Network.createNode("base3", "propositionnode");
+    Node base4 = Network.createNode("base4", "propositionnode");
+    pns2.add((PropositionNode)base3);
+    pns2.add((PropositionNode)base4);
+	Hashtable<Integer, PropositionNodeSet> attitudes = new Hashtable<Integer, PropositionNodeSet>();
+    attitudes.put(1, pns1);
+    attitudes.put(2, pns2);
+	Context context = controller.createContext(attitudes,"testContext");
+	attitudeNames.put(1, "imaginary world");
+	attitudeNames.put(2, "real world");
+	//works !
+	System.out.println(attitudeNames.get(1));
+
+    // Test the getAttitudeName method
+    try {
+        Integer attitudeName = context.getPropositionAttitude(base2.getId());
+        System.out.println("Attitude Id: " + attitudeName);
+    } catch (RuntimeException e) {
+        System.out.println(e.getMessage());
+    }
+
+	String attitudename = controller.getPropositionAttitudename(base2.getId(), context);
+	// Check if the output matches the expected value
+	if (attitudename.equals("imaginary world")) {
+	    System.out.println("Output is correct: " + attitudename);
+	} else {
+	    System.out.println("Output is incorrect. Expected: imaginary world, Actual: " + attitudename);
+	}
+
+	// Test the getAttitudeName method
+
     }
 }

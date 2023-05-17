@@ -60,6 +60,19 @@ public class Context implements Serializable{
 		return this.attitudes.get(attitude);
 	}
 
+	//Create a method that returns which attitude a propositionNode belongs to
+	public Integer getPropositionAttitude(Integer prop){
+		//loop through all the Integer keys of attitudesBitset
+		for (Integer key : this.AttitudesBitset.keySet()){
+			//If the propositionNode is in the attitude then return the name of the attitude
+			if (this.AttitudesBitset.get(key).get(prop)){
+				return key;
+			}
+		}
+		throw new RuntimeException("PropositionNode is not in any attitude");
+	}
+
+
 	//return all keys of attitudes hashtable in a list
 	protected ArrayList<Integer> getAttitudes(){
 		ArrayList<Integer> attitudes = new ArrayList<Integer>();
@@ -151,24 +164,24 @@ public class Context implements Serializable{
 	// Testing Context(attitudes, name) constructor :: Works
 	
         // create some PropositionNodeSets
-        PropositionNodeSet pns1 = new PropositionNodeSet();
-        Node base1 = Network.createNode("base1", "propositionnode");
-        Node base2 = Network.createNode("base2", "propositionnode");
-        pns1.add((PropositionNode)base1);
-        pns1.add((PropositionNode)base2);
-        PropositionNodeSet pns2 = new PropositionNodeSet();
-        Node base3 = Network.createNode("base3", "propositionnode");
-        Node base4 = Network.createNode("base4", "propositionnode");
-        pns2.add((PropositionNode)base3);
-        pns2.add((PropositionNode)base4);
-        
-        // create Hashtable with the PropositionNodeSets
-        Hashtable<Integer, PropositionNodeSet> attitudes = new Hashtable<Integer, PropositionNodeSet>();
-        attitudes.put(1, pns1);
-        attitudes.put(2, pns2);
+        //PropositionNodeSet pns1 = new PropositionNodeSet();
+        //Node base1 = Network.createNode("base1", "propositionnode");
+        //Node base2 = Network.createNode("base2", "propositionnode");
+        //pns1.add((PropositionNode)base1);
+        //pns1.add((PropositionNode)base2);
+        //PropositionNodeSet pns2 = new PropositionNodeSet();
+        //Node base3 = Network.createNode("base3", "propositionnode");
+        //Node base4 = Network.createNode("base4", "propositionnode");
+        //pns2.add((PropositionNode)base3);
+        //pns2.add((PropositionNode)base4);
+        //
+        //// create Hashtable with the PropositionNodeSets
+        //Hashtable<Integer, PropositionNodeSet> attitudes = new Hashtable<Integer, PropositionNodeSet>();
+        //attitudes.put(1, pns1);
+        //attitudes.put(2, pns2);
         
         // create a new Context object
-        Context context = new Context(attitudes, "myContext");
+        //Context context = new Context(attitudes, "myContext");
 
 		//Testing getAttitude_propositions(attitude) :: Works !
         //PropositionNodeSet attitude1Props = context.getAttitude_propositions(2);
@@ -192,6 +205,30 @@ public class Context implements Serializable{
             System.out.println("Bitset for Attitude " + key + ": " + context.AttitudesBitset.get(key));
         }
 	*/
+
+    PropositionNodeSet pns1 = new PropositionNodeSet();
+    Node base1 = Network.createNode("base1", "propositionnode");
+    Node base2 = Network.createNode("base2", "propositionnode");
+    pns1.add((PropositionNode)base1);
+    pns1.add((PropositionNode)base2);
+    PropositionNodeSet pns2 = new PropositionNodeSet();
+    Node base3 = Network.createNode("base3", "propositionnode");
+    Node base4 = Network.createNode("base4", "propositionnode");
+    pns2.add((PropositionNode)base3);
+    pns2.add((PropositionNode)base4);
+	Hashtable<Integer, PropositionNodeSet> attitudes = new Hashtable<Integer, PropositionNodeSet>();
+    attitudes.put(1, pns1);
+    attitudes.put(2, pns2);
+    Context context = new Context(attitudes, "myContext");
+
+
+    // Test the getAttitudeName method
+    try {
+        Integer attitudeName = context.getPropositionAttitude(base2.getId());
+        System.out.println("Attitude Id: " + attitudeName);
+    } catch (RuntimeException e) {
+        System.out.println(e.getMessage());
+    }
 
     } 
 }
