@@ -98,7 +98,7 @@ public class Context implements Serializable{
 	
 	/* Support Needed first
 
-    public boolean isAsserted(PropositionNode p, Integer att) {
+    public boolean isasserted(propositionnode p, integer att) {
         int hyp = p.getId();
 		PropositionNodeSet hyps = this.attitudes.get(att);
         return Arrays.binarySearch(PropositionNodeSet.getPropsSafely(hyps), hyp) > 0

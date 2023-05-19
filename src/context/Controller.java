@@ -8,7 +8,6 @@ import java.util.*;
 
 public class Controller{
     private static String currContext = "default";
-
     private static ContextSet contextSet = new ContextSet(currContext);
     //private static ArrayList<BitSet> minimalNoGoods = new ArrayList<>();
     private static String conflictingContext = null;
