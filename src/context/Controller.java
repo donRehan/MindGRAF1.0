@@ -252,12 +252,14 @@ public void addConsistency(String attitudeName, String consistency) {
 
 	//Testing Context to String method
 	
-	System.out.println("=======================");
-	System.out.println("=======================");
+//	System.out.println("=======================");
+//	System.out.println("=======================");
+//
+//	String contextString = controller.contextToString("testContext");
+//	System.out.println(contextString);
 
-	String contextString = controller.contextToString("testContext");
-	System.out.println(contextString);
-
+	//Creating negation prop
+    Node zero = Network.createNode("0", "base");
 
 
     // Test the getAttitudeName method
