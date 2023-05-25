@@ -75,7 +75,6 @@ public class Context implements Serializable{
 	}
 
 
-	/*
 	//return all keys of attitudes hashtable in a list
 	protected ArrayList<Integer> getAttitudes(){
 		ArrayList<Integer> attitudes = new ArrayList<Integer>();
@@ -84,7 +83,6 @@ public class Context implements Serializable{
 		}
 		return attitudes;
 	}
-	*/
 
 	//retrive the name of the Context
 	protected String getName(){
