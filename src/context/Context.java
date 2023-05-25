@@ -1,3 +1,4 @@
+//create method  that checks for conflicts  in a given context
 package context;
 
 import network.Network;
@@ -11,10 +12,10 @@ import java.util.*;
 public class Context implements Serializable{
     
     // Attributes
-    // rename to attitudePropositions to be more discreptive 
     private Hashtable< Integer, PropositionNodeSet> attitudes;
     private String name;
     private Hashtable<Integer , BitSet> AttitudesBitset;
+	//add brdige rules
 	
 	// Constructor
 	protected Context(String name){
@@ -24,6 +25,7 @@ public class Context implements Serializable{
 	}
 
 	//Consturctor with an attitude
+	//Double check the size of attiude keys is consistent with its names
 	protected Context(Hashtable<Integer, PropositionNodeSet> attitudes, String name) {
 	this.name = name;
 	this.attitudes = attitudes;
@@ -60,7 +62,7 @@ public class Context implements Serializable{
 		return this.attitudes.get(attitude);
 	}
 
-	//Create a method that returns which attitude a propositionNode belongs to
+	//Create a method that returns which attitude a propositionNode belongs to // Create one that returns a set
 	public Integer getPropositionAttitude(Integer prop){
 		//loop through all the Integer keys of attitudesBitset
 		for (Integer key : this.AttitudesBitset.keySet()){
@@ -73,6 +75,7 @@ public class Context implements Serializable{
 	}
 
 
+	/*
 	//return all keys of attitudes hashtable in a list
 	protected ArrayList<Integer> getAttitudes(){
 		ArrayList<Integer> attitudes = new ArrayList<Integer>();
@@ -81,6 +84,7 @@ public class Context implements Serializable{
 		}
 		return attitudes;
 	}
+	*/
 
 	//retrive the name of the Context
 	protected String getName(){
@@ -97,13 +101,6 @@ public class Context implements Serializable{
      */
 	
 	/* Support Needed first
-
-    public boolean isasserted(propositionnode p, integer att) {
-        int hyp = p.getId();
-		PropositionNodeSet hyps = this.attitudes.get(att);
-        return Arrays.binarySearch(PropositionNodeSet.getPropsSafely(hyps), hyp) > 0
-                || isSupported(p, att);
-    }
 
     public boolean isSupported(PropositionNode node, Integer att) {
 		PropositionNodeSet hyps = this.attitudes.get(att);

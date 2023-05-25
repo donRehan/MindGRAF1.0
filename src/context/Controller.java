@@ -1,3 +1,6 @@
+// Need  two flat sets of indicies
+// Not all atts we  can do logical implecations what not this indicates that these atts have these properties
+// Final
 package context;
 
 import network.Network;
@@ -12,12 +15,15 @@ public class Controller{
     //private static ArrayList<BitSet> minimalNoGoods = new ArrayList<>();
     private static String conflictingContext = null;
     private static PropositionNodeSet conflictingHyps;
+	//Make it  final variable 
 	private static Hashtable<Integer, String > attitudeNames = new Hashtable<Integer, String>();
+	// set of  set  of ids of the attitudes and changed to final
     private static Hashtable<String, ArrayList<String>> consistencies = new Hashtable<String , ArrayList<String>>();
     private static boolean automaticBR = false;
     
     //Consistencies list dictatation
     //Add an attitude to the consistencies list
+	// Attitude names are created only once in the start and cannot be changed any time else
     public void addAttitude(String attitudeName) {
       // If it doesn't exist then add it
       if (!(consistencies.containsKey(attitudeName))) {
