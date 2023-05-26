@@ -27,16 +27,28 @@ public class ContextSet implements Serializable {
 
 	//Returns a Context Object given its name. :: Works
     public Context getContext(String name) {
+		// check if the name doesn't exist in the ContextSet and return runtime exception
+		if (!contexts.containsKey(name)) {
+			throw new RuntimeException("Context " + name + " does not exist");
+		}
         return contexts.get(name);
     }
 
 	// given a Context name it removes it from the ContextSet :: Works !
     public boolean remove(String name) {
+		// if the name doesn't exist in the ContextSet return false
+		if (!contexts.containsKey(name)) {
+			return false;
+		}
         return contexts.remove(name) != null;
     }
 
     //Add a context into the ContextSet using its name as the key. :: Works !
     public Context add(Context c) {
+		// check if the name already exists in the ContextSet and return runtime exception
+		if (contexts.containsKey(c.getName())) {
+			throw new RuntimeException("Context " + c.getName() + " already exists");
+		}
         contexts.put(c.getName(), c);
     return c;
     }
