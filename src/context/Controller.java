@@ -1,3 +1,4 @@
+// Some attitudes don't have to be consistent like likes etc so when adding a prop check first this.
 // Need  two flat sets of indicies
 // Not all atts we  can do logical implecations what not this indicates that these atts have these properties
 // Final
@@ -55,14 +56,6 @@ public class Controller{
 		return attitudeNames.get(c.getPropositionAttitude(prop));
 	}
 
-
-    /*
-     *
-public void addConsistency(String attitudeName, String consistency) {
-    consistencies.computeIfAbsent(attitudeName, k -> new ArrayList<>()).add(consistency);
-}
-     */
-
     //Method that returns all consistencies for a partiuclar attitude
   public ArrayList<String> getConsistenciesForAttitude(String attitudeName) {
     if (consistencies.containsKey(attitudeName)) {
@@ -89,13 +82,11 @@ public void addConsistency(String attitudeName, String consistency) {
 		return contextSet.add(c);
 	}
 
-//	public static Context createContext() {
-//		return new Context();
-//	}
-//
-//
-	
 	public static Context getContext(String contextName) {
+		//if no context with this name exists then throw an error
+		if (contextSet.getContext(contextName) == null){
+			throw new RuntimeException("Context with name '" + contextName + "' doesn't exist !");
+		}
 		return contextSet.getContext(contextName);
 	}
 	
@@ -109,6 +100,10 @@ public void addConsistency(String attitudeName, String consistency) {
 
 	public Context getCurrentContext()
 	{
+		//Check if  current Context  is not default
+		if (currContext == "default"){
+			throw new RuntimeException("No current Context is set");
+		}
 		return contextSet.getContext(currContext);
 	}
 
