@@ -26,11 +26,9 @@ public class ContextSet implements Serializable {
     }
 
 	//Returns a Context Object given its name. :: Works
+	//When using this method make sure to null check the return value
     public Context getContext(String name) {
 		// check if the name doesn't exist in the ContextSet and return runtime exception
-		if (!contexts.containsKey(name)) {
-			throw new RuntimeException("Context " + name + " does not exist");
-		}
         return contexts.get(name);
     }
 

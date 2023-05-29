@@ -1,4 +1,4 @@
-// Some attitudes don't have to be consistent like likes etc so when adding a prop check first this.
+// Some attitudes don't have to be consistent like likes etc so when adding a prop check first this. L , C
 // Need  two flat sets of indicies
 // Not all atts we  can do logical implecations what not this indicates that these atts have these properties
 // Final
@@ -7,8 +7,29 @@ package context;
 import network.Network;
 import nodes.Node;
 import nodes.PropositionNode;
+import set.NodeSet;
 import set.PropositionNodeSet;
 import java.util.*;
+import paths.AndPath;
+import paths.ComposePath;
+import paths.FUnitPath;
+import paths.KPlusPath;
+import paths.Path;
+import paths.PathTrace;
+import relations.Relation;
+import set.NodeSet;
+import cables.DownCable;
+import cables.DownCableSet;
+import caseFrames.Adjustability;
+import components.MyClassCreator;
+import context.Context;
+import nodes.ActNode;
+import nodes.IndividualNode;
+import nodes.MolecularType;
+import nodes.Node;
+import nodes.PropositionNode;
+
+import cables.DownCable;
 
 public class Controller{
     private static String currContext = "default";
@@ -129,6 +150,41 @@ public class Controller{
     currContext = "default";
 }
 
+	// Checks if a contradiction exists if we introduce a proposition in a context's attitude
+	public boolean ContradictionExists(Integer att, Context c, PropositionNode p){
+	// Get the propositionNodeSet for the attitude
+	PropositionNodeSet propositionNodeSet = c.getAttitude_propositions(att);
+	/*
+	Add consistencies list next step
+	//Get the consistency for the attitude if it exists
+	ArrayList<String> consistencies = getConsistenciesForAttitude(attitudeNames.get(att));
+	//if Consistencies is not null then set a flag to true
+	boolean cons = false;
+	if (consistencies != null) {
+		cons = true;
+	}
+	//If cons is true then add the propositions of the cons to a unified props set
+	*/
+
+	// Go through all the propositionNodeSet and check if getNegation(p) returns true. if so then return true
+	//Handle if it was a base node 
+	//Node test = negationTest.getNegation(); if(test == null) {System.out.println("null");} else{
+	//if(test.equals(M1)) {System.out.println("true");} else {System.out.println("false");}}
+	for (int prop : PropositionNodeSet.getPropsSafely(propositionNodeSet)) {
+		if (Network.getNodeById(prop).getNegation().equals(p)) {
+			return true;
+		}
+	}
+	return false;
+
+	}
+
+//	public static void addPropositionNode(Integer att, PropositionNode p, Context c){
+//		// Get the propositionNodeSet for the attitude if it exists if not create it 
+//		
+//		// Add the proposition to the propositionNodeSet
+//		propositionNodeSet.add(p);
+//	}
 
 	public static boolean isAutomaticBR() {
 		return automaticBR;
@@ -214,44 +270,44 @@ public class Controller{
     // create a new Controller instance
     Controller controller = new Controller();
 	Network network = new Network();
-	// create a new context
+//	// create a new context
     PropositionNodeSet pns1 = new PropositionNodeSet();
-    Node base1 = Network.createNode("base1", "propositionnode");
-    Node base2 = Network.createNode("base2", "propositionnode");
-    pns1.add((PropositionNode)base1);
-    pns1.add((PropositionNode)base2);
-    PropositionNodeSet pns2 = new PropositionNodeSet();
-    Node base3 = Network.createNode("base3", "propositionnode");
-    Node base4 = Network.createNode("base4", "propositionnode");
-    pns2.add((PropositionNode)base3);
-    pns2.add((PropositionNode)base4);
-	Hashtable<Integer, PropositionNodeSet> attitudes = new Hashtable<Integer, PropositionNodeSet>();
-    attitudes.put(1, pns1);
-    attitudes.put(2, pns2);
-	Context context = controller.createContext(attitudes,"testContext");
-	attitudeNames.put(1, "imaginary world");
-	attitudeNames.put(2, "real world");
-	//works !
-	System.out.println(attitudeNames.get(1));
-
-	// Print the initial list of contexts
-	System.out.println("Initial list of contexts:");
-	controller.printContexts();
-
-	// Remove the context with the specified name
-	//fails as its wrong and doesn't exist
-	//boolean removed = controller.removeContext("myContext");
-	//boolean removed = controller.removeContext("testContext");
-
-	//if (removed) {
-    //System.out.println("Context 'myContext' removed successfully.");
-	//} else {
-    //System.out.println("Failed to remove context 'myContext'.");
-	//}
-	//System.out.println("Updated list of contexts:");
-	//controller.printContexts();
-
-	//Testing Context to String method
+//    Node base1 = Network.createNode("p", "propositionnode");
+//    Node base2 = Network.createNode("q", "propositionnode");
+//    pns1.add((PropositionNode)base1);
+//    pns1.add((PropositionNode)base2);
+//    PropositionNodeSet pns2 = new PropositionNodeSet();
+//    Node base3 = Network.createNode("w", "propositionnode");
+//    Node base4 = Network.createNode("z", "propositionnode");
+//    pns2.add((PropositionNode)base3);
+//    pns2.add((PropositionNode)base4);
+//	Hashtable<Integer, PropositionNodeSet> attitudes = new Hashtable<Integer, PropositionNodeSet>();
+//    attitudes.put(1, pns1);
+//    attitudes.put(2, pns2);
+//	Context context = controller.createContext(attitudes,"testContext");
+//	attitudeNames.put(1, "belief");
+//	attitudeNames.put(2, "desires");
+//	//works !
+//	System.out.println(attitudeNames.get(1));
+//
+//	// Print the initial list of contexts
+//	System.out.println("Initial list of contexts:");
+//	controller.printContexts();
+//
+//	// Remove the context with the specified name
+//	//fails as its wrong and doesn't exist
+//	//boolean removed = controller.removeContext("myContext");
+//	//boolean removed = controller.removeContext("testContext");
+//
+//	//if (removed) {
+//    //System.out.println("Context 'myContext' removed successfully.");
+//	//} else {
+//    //System.out.println("Failed to remove context 'myContext'.");
+//	//}
+//	//System.out.println("Updated list of contexts:");
+//	//controller.printContexts();
+//
+//	//Testing Context to String method
 	
 //	System.out.println("=======================");
 //	System.out.println("=======================");
@@ -260,8 +316,28 @@ public class Controller{
 //	System.out.println(contextString);
 
 	//Creating negation prop
-    Node zero = Network.createNode("0", "base");
-
+    Node zero = Network.createNode("0", "propositionnode");
+	// Want to set the arg relation with a node in the down cable set
+	Node negationTest = Network.createNode("negationTest", "propositionnode");
+	//Create a node set to add negationTest node to it
+	NodeSet pns = new NodeSet();
+	NodeSet Zero = new NodeSet();
+	Zero.add(zero);
+	pns.add((PropositionNode)negationTest);
+	pns1.add((PropositionNode)negationTest);
+	//Creating the relations
+	Relation arg = new Relation ("arg", "", Adjustability.NONE, 1);
+	Relation min = new Relation ("min", "", Adjustability.NONE, 1);
+	Relation max = new Relation ("max", "", Adjustability.NONE, 1);
+	//Creating the down cables
+	DownCable dc = new DownCable(arg, pns);
+	DownCable Min = new DownCable(min, Zero);
+	DownCable Max = new DownCable(max, Zero);
+	// Create node M1 like example with arg cable to m2. m2 <= negationTest
+	// M1 negates negationTest node
+	Node M1 = Network.createNode("propositionnode", new DownCableSet(dc, Min, Max));
+	// Above code generates the negation as in the figure 2.5
+	// Below is testing detecting the contradiction.
 
     // Test the getAttitudeName method
 //    try {
@@ -273,10 +349,10 @@ public class Controller{
 //
 //	String attitudename = controller.getPropositionAttitudename(base2.getId(), context);
 //	// Check if the output matches the expected value
-//	if (attitudename.equals("imaginary world")) {
+//	if (attitudename.equals("belief")) {
 //	    System.out.println("Output is correct: " + attitudename);
 //	} else {
-//	    System.out.println("Output is incorrect. Expected: imaginary world, Actual: " + attitudename);
+//	    System.out.println("Output is incorrect. Expected: belief, Actual: " + attitudename);
 //	}
 
 	// Testing SetAutomatic BR method :: Works !
@@ -285,6 +361,37 @@ public class Controller{
 //	controller.setAutomaticBR(true);
 //	// Print the updated value of automaticBR
 //	System.out.println("Updated value of automaticBR: " + Controller.isAutomaticBR());
+
+
+	// ======================== TESTING CONTRADICTIONS ======================== \\
+    // Create a new context
+    //Context context = new Context("ContextName");
+    Node base1 = Network.createNode("base1", "propositionnode");
+    Node base2 = Network.createNode("base2", "propositionnode");
+//    pns1.add((PropositionNode)base1);
+//    pns1.add((PropositionNode)base2);
+    PropositionNodeSet pns2 = new PropositionNodeSet();
+    Node base3 = Network.createNode("base3", "propositionnode");
+    Node base4 = Network.createNode("base4", "propositionnode");
+    pns2.add((PropositionNode)base3);
+	//May cause an issue that you are type casting.
+	pns1.add((PropositionNode) negationTest);
+    pns2.add((PropositionNode)base4);
+	Hashtable<Integer, PropositionNodeSet> attitudes = new Hashtable<Integer, PropositionNodeSet>();
+    attitudes.put(1, pns1);
+    attitudes.put(2, pns2);
+	Context context = controller.createContext(attitudes,"testContext");
+
+	//Node test = negationTest.getNegation(); if(test == null) {System.out.println("null");} else{
+	//if(test.equals(M1)) {System.out.println("true");} else {System.out.println("false");}}
+	//Possible issue is the type casting of the variables into prop nodes , Figure out a fix.
+	boolean contradictionExists = controller.ContradictionExists(1, context, (PropositionNode) M1);
+    // Check the result
+    if (contradictionExists) {
+        System.out.println("Contradiction exists!");
+    } else {
+        System.out.println("No contradiction found.");
+    }
 
     }
 }

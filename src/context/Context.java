@@ -89,6 +89,10 @@ public class Context implements Serializable{
 		return this.name;
 	}
 
+	protected Hashtable<Integer, PropositionNodeSet> getAttitudesHashtable(){
+		return this.attitudes;
+	}
+
 	    /**
      * Checks if a propositions is asserted in this Attitude
      *
