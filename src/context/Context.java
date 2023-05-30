@@ -62,6 +62,56 @@ public class Context implements Serializable{
 		return this.attitudes.get(attitude);
 	}
 
+	protected boolean hasAttitude(Integer attitude)
+	{
+		return this.attitudes.containsKey(attitude);
+	}
+
+	//Check if the propositionNode is already in the PropositionNodeSet
+	//If so add it
+	protected void checkProp_Inattitude(Integer att, PropositionNode p){
+			if (!this.attitudes.get(att).contains(p)){
+				this.attitudes.get(att).add(p);
+				// Add to Bitset as well
+				AdjustBitset(att, p);
+			}
+			else{
+				throw new RuntimeException("PropositionNode already exists in the attitude");
+			}
+	}
+	
+	//Check if the attitude exists if so 
+	//Check if it exists in the attitude's propSet.
+	//if not then add the attitude to the context and then add to it the propositionNode
+	protected void addProposition(Integer att, PropositionNode p){
+			if(hasAttitude(att)){
+				checkProp_Inattitude(att, p);
+				return;
+			}
+			//If the attitude does not exist, create a new PropositionNodeSet and add the propositionNode to it
+			// Then add with the attitude to the context
+			PropositionNodeSet new_propositions = new PropositionNodeSet();
+			new_propositions.add(p);
+
+			// Add to Bitset as well
+			AdjustBitset(att, p);
+
+			this.attitudes.put(att, new_propositions);
+	}
+
+	// Adds to attitudesBitset values 
+	protected void AdjustBitset(Integer att, PropositionNode p){
+		//Get the current bitset of the attitude
+		BitSet bitset = this.AttitudesBitset.get(att);
+		if (bitset == null){
+			bitset = new BitSet();
+		}
+		//Set the bitset of the propositionNode to true
+		bitset.set(p.getId());
+		//Add the bitset to the attitudesBitset
+		this.AttitudesBitset.put(att, bitset);
+	}
+
 	//Create a method that returns which attitude a propositionNode belongs to // Create one that returns a set
 	public Integer getPropositionAttitude(Integer prop){
 		//loop through all the Integer keys of attitudesBitset
@@ -209,7 +259,7 @@ public class Context implements Serializable{
     Node base1 = Network.createNode("base1", "propositionnode");
     Node base2 = Network.createNode("base2", "propositionnode");
     pns1.add((PropositionNode)base1);
-    pns1.add((PropositionNode)base2);
+    //pns1.add((PropositionNode)base2);
     PropositionNodeSet pns2 = new PropositionNodeSet();
     Node base3 = Network.createNode("base3", "propositionnode");
     Node base4 = Network.createNode("base4", "propositionnode");
@@ -219,6 +269,9 @@ public class Context implements Serializable{
     attitudes.put(1, pns1);
     attitudes.put(2, pns2);
     Context context = new Context(attitudes, "myContext");
+	// ============= Testing adding props to attitudes =============
+	Integer test_attitude = 3;
+	context.addProposition(test_attitude, (PropositionNode) base2);
 
 
     // Test the getAttitudeName method
