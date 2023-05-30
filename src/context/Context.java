@@ -124,6 +124,20 @@ public class Context implements Serializable{
 		throw new RuntimeException("PropositionNode is not in any attitude");
 	}
 
+	// Add to thesis
+	// Method that removes a proposition from a given attitude given 
+	// Check if the prop is in that attitude if not return an appropriate error message
+	// Uses is supported method to check if the proposition is supported in every given attitude
+	protected boolean remove_Prop(Integer att, PropositionNode p){
+		//Check if the attitude exists
+		if(isSupported(p,att)){
+		//remove it from the attitude
+		this.attitudes.get(att).remove(p);
+		return true;
+		}
+		//Not removed if the propositionNode is not in the attitude
+		return false;
+	}
 
 	//return all keys of attitudes hashtable in a list
 	protected ArrayList<Integer> getAttitudes(){
@@ -152,22 +166,19 @@ public class Context implements Serializable{
      * @throws NodeNotFoundInNetworkException If the node p doesn't exist in the network.
      */
 	
-	/* Support Needed first
-
+	// Add to thesis
+	// Case where something implies another , has to be also checked 
+	// Takes a prop and an attitude and then it checks if the props is in this attitude or not. 
     public boolean isSupported(PropositionNode node, Integer att) {
-		PropositionNodeSet hyps = this.attitudes.get(att);
-		//Support Needed
-        Collection<PropositionNodeSet> assumptionSet = node.getBasicSupport()
-                .getAssumptionBasedSupport()
-                .values();
-        for (PropositionNodeSet assumptionHyps : assumptionSet) {
-            if (assumptionHyps.isSubSet(hyps)) {
-                return true;
-            }
-        }
+		//Check if the node exists in the attitude or not
+		if (this.attitudes.get(att).contains(node)){
+			return true;
+		}
+		//Else doesn't exist
         return false;
     }
 
+	/*
 	* Returns a list of all proposition nodes that are asserted in this context given attitude
 	* @param att the attitude to be checked for assertion
 	* @return a list of all proposition nodes that are asserted in this context given attitude
