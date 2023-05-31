@@ -3,7 +3,6 @@
 // Not all atts we  can do logical implecations what not this indicates that these atts have these properties
 // Final
 package context;
-
 import network.Network;
 import nodes.Node;
 import nodes.PropositionNode;
@@ -28,7 +27,6 @@ import nodes.IndividualNode;
 import nodes.MolecularType;
 import nodes.Node;
 import nodes.PropositionNode;
-
 import cables.DownCable;
 
 public class Controller{
@@ -40,16 +38,16 @@ public class Controller{
 	//Make it  final variable 
 	private static Hashtable<Integer, String > attitudeNames = new Hashtable<Integer, String>();
 	// set of  set  of ids of the attitudes and changed to final
-    private static Hashtable<String, ArrayList<String>> consistencies = new Hashtable<String , ArrayList<String>>();
+    private static Hashtable<Integer, ArrayList<Integer>> consistencies = new Hashtable<Integer , ArrayList<Integer>>();
     private static boolean automaticBR = false;
     
     //Consistencies list dictatation
     //Add an attitude to the consistencies list
 	// Attitude names are created only once in the start and cannot be changed any time else
-    public void addAttitude(String attitudeName) {
+    public void addAttitude(Integer attitudeName) {
       // If it doesn't exist then add it
       if (!(consistencies.containsKey(attitudeName))) {
-        consistencies.put(attitudeName, new ArrayList<String>());
+        consistencies.put(attitudeName, new ArrayList<Integer>());
     }
     }
 
@@ -58,13 +56,13 @@ public class Controller{
 	}
 
     //Adding a consistency to an attitude
-    public void addConsistency(String attitudeName, String consistency) {
+    public void addConsistency(Integer attitudeName, Integer consistency) {
         //If the atttiude doesn't exist then create a new one and add it there
         if (!(consistencies.containsKey(attitudeName))) {
             addAttitude(attitudeName);
         }
         //Get the arraylist of consistencies for the attitude
-        ArrayList<String> attitudeConsistencies = consistencies.get(attitudeName);
+        ArrayList<Integer> attitudeConsistencies = consistencies.get(attitudeName);
         //If the attitude exists then add the consistency to the list
         if (attitudeConsistencies != null && !attitudeConsistencies.contains(consistency)) {
             attitudeConsistencies.add(consistency);
@@ -78,16 +76,16 @@ public class Controller{
 	}
 
     //Method that returns all consistencies for a partiuclar attitude
-  public ArrayList<String> getConsistenciesForAttitude(String attitudeName) {
+  public ArrayList<Integer> getConsistenciesForAttitude(Integer attitudeName) {
     if (consistencies.containsKey(attitudeName)) {
         return consistencies.get(attitudeName);
     }
-    return new ArrayList<String>();
+    return null;
 }
 
     //Checking if a consistency exists for an attitude
-    public boolean consistencyExists(String attitudeName, String consistency) {
-        ArrayList<String> attitudeConsistencies = consistencies.get(attitudeName);
+    public boolean consistencyExists(Integer attitudeName, Integer consistency) {
+        ArrayList<Integer> attitudeConsistencies = consistencies.get(attitudeName);
         if (attitudeConsistencies != null) {
             return attitudeConsistencies.contains(consistency);
         }
@@ -152,24 +150,15 @@ public class Controller{
 
 	// Checks if a contradiction exists if we introduce a proposition in a context's attitude
 	public boolean ContradictionExists(Integer att, Context c, PropositionNode p){
-	// Get the propositionNodeSet for the attitude
 	PropositionNodeSet propositionNodeSet = c.getAttitude_propositions(att);
-	/*
-	Add consistencies list next step
-	//Get the consistency for the attitude if it exists
-	ArrayList<String> consistencies = getConsistenciesForAttitude(attitudeNames.get(att));
-	//if Consistencies is not null then set a flag to true
-	boolean cons = false;
+	ArrayList<Integer> consistencies = getConsistenciesForAttitude(att);
+	//System.out.println(consistencies == null);
 	if (consistencies != null) {
-		cons = true;
+		propositionNodeSet = consistencies_Props(consistencies, c);
 	}
 	//If cons is true then add the propositions of the cons to a unified props set
-	*/
-
 	// Go through all the propositionNodeSet and check if getNegation(p) returns true. if so then return true
 	//Handle if it was a base node 
-	//Node test = negationTest.getNegation(); if(test == null) {System.out.println("null");} else{
-	//if(test.equals(M1)) {System.out.println("true");} else {System.out.println("false");}}
 	for (int prop : PropositionNodeSet.getPropsSafely(propositionNodeSet)) {
 		if (Network.getNodeById(prop).getNegation().equals(p)) {
 			return true;
@@ -177,6 +166,45 @@ public class Controller{
 	}
 	return false;
 
+	}
+
+	//Add to thesis
+	//Helper method to loop through all consistencies and add them to a unified propositionsNodeSet
+	public PropositionNodeSet consistencies_Props(ArrayList<Integer> consistencies, Context c)
+	{
+		PropositionNodeSet propSet = new PropositionNodeSet();
+		for (Integer cons : consistencies) {
+			//Get the propositionNodeSet for the attitude
+			PropositionNodeSet propositionNodeSet = c.getAttitude_propositions(cons);
+			//Add the propositionNodeSet to the unified propSet
+			addAll(propositionNodeSet,propSet);
+		}
+		return propSet;
+	}
+
+	//Add to thesis
+	//A helper method for consistencies_Props to add all the propositions of a propositionNodeSet to a unified propSet
+	public PropositionNodeSet addAll(PropositionNodeSet propositionNodeSet, PropositionNodeSet propSet)
+	{
+		for (int prop : PropositionNodeSet.getPropsSafely(propositionNodeSet)) {
+			propSet.add(prop);
+		}
+		return propSet;
+	}
+
+	// Add to thesis
+	// This method returns a propositionNodeset of all the propositions that are consistent within this context into one big propSet
+	// Current Props => Method => Checks Consistencies => Returns a unified propSet
+	public PropositionNodeSet getCons_Props(PropositionNodeSet current_Props, ArrayList<Integer> consistencies, Context c)
+	{
+		//if consistencies is not null then add the propositions of the cons to a unified props set
+		if(consistencies != null)
+		{
+			//Helper method to loop through all consistencies and add them to a unified propositionsNodeSet
+			PropositionNodeSet propSet = consistencies_Props(consistencies, c);
+			return propSet;
+		}
+		return  current_Props;
 	}
 
 //	public static void addPropositionNode(Integer att, PropositionNode p, Context c){
@@ -364,6 +392,10 @@ public class Controller{
 
 
 	// ======================== TESTING CONTRADICTIONS ======================== \\
+	// In this example we add a negated node in the attitudes 2 , and we create a consistency between attitude 1 and 2
+	// We then add a node in attitude 1 that contradicts the negated node in attitude 2
+	// We then check if the contradiction is detected and it is hence the test is passed !
+	// ======================== CONSISTENCIES INCLUDED ======================== \\
     // Create a new context
     //Context context = new Context("ContextName");
     Node base1 = Network.createNode("base1", "propositionnode");
@@ -375,12 +407,14 @@ public class Controller{
     Node base4 = Network.createNode("base4", "propositionnode");
     pns2.add((PropositionNode)base3);
 	//May cause an issue that you are type casting.
-	pns1.add((PropositionNode) negationTest);
+	pns2.add((PropositionNode) negationTest);
     pns2.add((PropositionNode)base4);
 	Hashtable<Integer, PropositionNodeSet> attitudes = new Hashtable<Integer, PropositionNodeSet>();
     attitudes.put(1, pns1);
     attitudes.put(2, pns2);
 	Context context = controller.createContext(attitudes,"testContext");
+	//add consistency between attitude 1 and 2
+	controller.addConsistency(1, 2);
 
 	//Node test = negationTest.getNegation(); if(test == null) {System.out.println("null");} else{
 	//if(test.equals(M1)) {System.out.println("true");} else {System.out.println("false");}}

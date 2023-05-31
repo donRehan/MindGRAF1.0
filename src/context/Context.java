@@ -1,11 +1,9 @@
 //create method  that checks for conflicts  in a given context
 package context;
-
 import network.Network;
 import nodes.Node;
 import nodes.PropositionNode;
 import set.PropositionNodeSet;
-
 import java.io.Serializable;
 import java.util.*;
 
@@ -124,7 +122,6 @@ public class Context implements Serializable{
 		throw new RuntimeException("PropositionNode is not in any attitude");
 	}
 
-	// Add to thesis
 	// Method that removes a proposition from a given attitude given 
 	// Check if the prop is in that attitude if not return an appropriate error message
 	// Uses is supported method to check if the proposition is supported in every given attitude
@@ -166,7 +163,6 @@ public class Context implements Serializable{
      * @throws NodeNotFoundInNetworkException If the node p doesn't exist in the network.
      */
 	
-	// Add to thesis
 	// Case where something implies another , has to be also checked 
 	// Takes a prop and an attitude and then it checks if the props is in this attitude or not. 
     public boolean isSupported(PropositionNode node, Integer att) {
@@ -280,18 +276,26 @@ public class Context implements Serializable{
     attitudes.put(1, pns1);
     attitudes.put(2, pns2);
     Context context = new Context(attitudes, "myContext");
-	// ============= Testing adding props to attitudes =============
-	Integer test_attitude = 3;
-	context.addProposition(test_attitude, (PropositionNode) base2);
+//	// ============= Testing adding props to attitudes ============= \\
+//	Integer test_attitude = 3;
+//	context.addProposition(test_attitude, (PropositionNode) base2);
+//
+//
+//    // Test the getAttitudeName method
+//    try {
+//        Integer attitudeName = context.getPropositionAttitude(base2.getId());
+//        System.out.println("Attitude Id: " + attitudeName);
+//    } catch (RuntimeException e) {
+//        System.out.println(e.getMessage());
+//    }
 
-
-    // Test the getAttitudeName method
-    try {
-        Integer attitudeName = context.getPropositionAttitude(base2.getId());
-        System.out.println("Attitude Id: " + attitudeName);
-    } catch (RuntimeException e) {
-        System.out.println(e.getMessage());
-    }
+	// ============= Testing removing props from attitudes ============= \\
+//	boolean removed = context.remove_Prop(2, (PropositionNode) base3);
+//
+//	if(removed)
+//		System.out.println("Proposition removed successfully");
+//	else
+//		System.out.println("Proposition not removed successfully");
 
     } 
 }
