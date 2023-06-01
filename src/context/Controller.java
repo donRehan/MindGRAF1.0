@@ -1,6 +1,3 @@
-// Some attitudes don't have to be consistent like likes etc so when adding a prop check first this. L , C
-// Need  two flat sets of indicies
-// Not all atts we  can do logical implecations what not this indicates that these atts have these properties
 // Final
 package context;
 import network.Network;
@@ -40,6 +37,11 @@ public class Controller{
 	// set of  set  of ids of the attitudes and changed to final
     private static Hashtable<Integer, ArrayList<Integer>> consistencies = new Hashtable<Integer , ArrayList<Integer>>();
     private static boolean automaticBR = false;
+// Some attitudes don't have to be consistent like likes etc so when adding a prop check first this. L , C
+	private static Integer[] L;
+	private static Integer[] C;
+	//bridge rules
+	private static Integer[] BR;
     
     //Consistencies list dictatation
     //Add an attitude to the consistencies list
