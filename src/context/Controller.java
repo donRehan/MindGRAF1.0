@@ -158,17 +158,19 @@ public class Controller{
 	}
 	//If cons is true then add the propositions of the cons to a unified props set
 	// Go through all the propositionNodeSet and check if getNegation(p) returns true. if so then return true
-	//Handle if it was a base node 
 	for (int prop : PropositionNodeSet.getPropsSafely(propositionNodeSet)) {
+		try{
 		if (Network.getNodeById(prop).getNegation().equals(p)) {
 			return true;
 		}
+		}
+		catch(Exception e){
+			continue;
+		}
 	}
 	return false;
-
 	}
 
-	//Add to thesis
 	//Helper method to loop through all consistencies and add them to a unified propositionsNodeSet
 	public PropositionNodeSet consistencies_Props(ArrayList<Integer> consistencies, Context c)
 	{
@@ -182,7 +184,62 @@ public class Controller{
 		return propSet;
 	}
 
-	//Add to thesis
+	// Method to add a proposition to a context in a particular attitude 
+	// Checks if a contradiction exists if we introduce a proposition in a context's attitude
+	// if it exists then set the variables associated with that then call resolve conflicts method to resolve the conflict'
+	public void addPropositionToContext(Integer att, Context c, PropositionNode p){
+		//Check if the proposition already exists in the context
+		if (c.getAttitude_propositions(att).contains(p.getId())) 
+			throw new RuntimeException("Proposition already exists in the context");
+		//Call the method that changes the required variables once a conflict exist and adds the proposition otherwise
+		change_Variables(att,c,p);
+	}
+
+	//Check if a contradiction exists if we introduce a proposition in a context's attitude
+	//Not finished because of this error
+	/*
+	 * Exception in thread "main" java.lang.NullPointerException: Cannot invoke "cables.UpCable.getNodeSet()" because the return value of "nodes.Node.getUpCable(String)" is null
+        at nodes.Node.getParents(Node.java:71)
+        at nodes.Node.getNegation(Node.java:156)
+        at context.Controller.change_Variables(Controller.java:212)
+        at context.Controller.addPropositionToContext(Controller.java:197)
+        at context.Controller.main(Controller.java:513)
+		Reason may be because of how propositionNodeSet is created ,  Learn from the previous design
+	*/
+	public void change_Variables(Integer att, Context c, PropositionNode p){
+		//Check if there exists a contradiction
+		if(ContradictionExists(att,c,p))
+		{
+			Integer id = p.getId();
+			PropositionNode node = (PropositionNode) Network.getNodeById(id);
+		}
+	}
+
+	//This method resolves conflict by prompting the user the propositions that caused the conflict 
+	//The user is then asked to remove one of them from the context
+	//Then the conflicting context is set to default and the conflictingHyps is set to null
+	//resolveConflicts();
+	public void resolveConflicts(Integer att){
+		//Print the conflicting context and the conflictingHyps
+		System.out.println("Conflict exists between context " + conflictingContext + " and the following propositions:");
+		for (int prop : PropositionNodeSet.getPropsSafely(conflictingHyps)) {
+			System.out.println(Network.getNodeById(prop).getName());
+		}
+		//Prompt the user to remove one of the propositions from the context
+		System.out.println("Please remove one of the propositions from the context");
+		//Scanner to get the user input
+		Scanner sc = new Scanner(System.in);
+		//Get the user input
+		String input = sc.nextLine();
+		//Remove the proposition from the context
+		contextSet.getContext(conflictingContext).remove_Prop(att, (PropositionNode) Network.getNodeById(Integer.parseInt(input)));
+		//Close scanner
+		sc.close();
+		//Set the conflicting context to default and the conflictingHyps to null
+//		conflictingContext = "default";
+//		conflictingHyps = null;
+	}
+
 	//A helper method for consistencies_Props to add all the propositions of a propositionNodeSet to a unified propSet
 	public PropositionNodeSet addAll(PropositionNodeSet propositionNodeSet, PropositionNodeSet propSet)
 	{
@@ -192,7 +249,6 @@ public class Controller{
 		return propSet;
 	}
 
-	// Add to thesis
 	// This method returns a propositionNodeset of all the propositions that are consistent within this context into one big propSet
 	// Current Props => Method => Checks Consistencies => Returns a unified propSet
 	public PropositionNodeSet getCons_Props(PropositionNodeSet current_Props, ArrayList<Integer> consistencies, Context c)
@@ -364,6 +420,10 @@ public class Controller{
 	// Create node M1 like example with arg cable to m2. m2 <= negationTest
 	// M1 negates negationTest node
 	Node M1 = Network.createNode("propositionnode", new DownCableSet(dc, Min, Max));
+	Integer M1ID = negationTest.getId();
+	System.out.println("M1 Id: " + M1ID);
+//	Integer M1Id = M1.getId();
+//	System.out.println("M1Id: " + M1Id);
 	// Above code generates the negation as in the figure 2.5
 	// Below is testing detecting the contradiction.
 
@@ -408,6 +468,9 @@ public class Controller{
     pns2.add((PropositionNode)base3);
 	//May cause an issue that you are type casting.
 	pns2.add((PropositionNode) negationTest);
+	//Print negation testing id
+	Integer negationTestId = negationTest.getId();
+	System.out.println("NegationTestId: " + negationTestId);
     pns2.add((PropositionNode)base4);
 	Hashtable<Integer, PropositionNodeSet> attitudes = new Hashtable<Integer, PropositionNodeSet>();
     attitudes.put(1, pns1);
@@ -419,13 +482,34 @@ public class Controller{
 	//Node test = negationTest.getNegation(); if(test == null) {System.out.println("null");} else{
 	//if(test.equals(M1)) {System.out.println("true");} else {System.out.println("false");}}
 	//Possible issue is the type casting of the variables into prop nodes , Figure out a fix.
-	boolean contradictionExists = controller.ContradictionExists(1, context, (PropositionNode) M1);
-    // Check the result
-    if (contradictionExists) {
-        System.out.println("Contradiction exists!");
-    } else {
-        System.out.println("No contradiction found.");
-    }
+//	boolean contradictionExists = controller.ContradictionExists(1, context, (PropositionNode) M1);
+//    // Check the result
+//    if (contradictionExists) {
+//        System.out.println("Contradiction exists!");
+//    } else {
+//        System.out.println("No contradiction found.");
+//    }
+
+	// ======================== TESTING ADDING PROPS ======================== \\
+//	controller.addPropositionToContext(2 , context, (PropositionNode) base2);
+//
+//    // Test the getAttitudeName method
+//    try {
+//        Integer attitudeName = context.getPropositionAttitude(base2.getId());
+//        System.out.println("Attitude Id: " + attitudeName);
+//    } catch (RuntimeException e) {
+//        System.out.println(e.getMessage());
+//    }
+	// ======================== TESTING ADDING PROPS W/ CONTRADICTIONS ======================== \\
+	controller.addPropositionToContext(2 , context, (PropositionNode) M1);
+
+    // Test the getAttitudeName method
+//    try {
+//		String conflict = controller.conflictingContext;
+//        System.out.println(conflict);
+//    } catch (RuntimeException e) {
+//        System.out.println(e.getMessage());
+//    }
 
     }
 }
