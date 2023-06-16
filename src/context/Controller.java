@@ -163,6 +163,7 @@ public class Controller{
 	for (int prop : PropositionNodeSet.getPropsSafely(propositionNodeSet)) {
 		try{
 		if (Network.getNodeById(prop).getNegation().equals(p)) {
+			//System.out.println(Network.getNodeById(prop));
 			return true;
 		}
 		}
@@ -210,10 +211,32 @@ public class Controller{
 	*/
 	public void change_Variables(Integer att, Context c, PropositionNode p){
 		//Check if there exists a contradiction
+		//Remove this portion into its own function vv
+		PropositionNodeSet propositionNodeSet = c.getAttitude_propositions(att);
+		ArrayList<Integer> consistencies = getConsistenciesForAttitude(att);
+		//System.out.println(consistencies == null);
+		if (consistencies != null) {
+			propositionNodeSet = consistencies_Props(consistencies, c);
+		}
+		//Remove this portion into its own function ^^
 		if(ContradictionExists(att,c,p))
 		{
+			//System.out.println("Contradiction exists");
 			Integer id = p.getId();
-			PropositionNode node = (PropositionNode) Network.getNodeById(id);
+			//This is the node to compare the node with IE M1 from the Graph
+			PropositionNode contraictory_node = (PropositionNode) Network.getNodeById(id);
+			// Create a method for this functionality As it is repeated twice vv
+			for (int prop : PropositionNodeSet.getPropsSafely(propositionNodeSet)) {
+				try{
+				if (Network.getNodeById(prop).getNegation().equals(p)) {
+					System.out.println(Network.getNodeById(prop));
+				}
+				}
+				catch(Exception e){
+					continue;
+				}
+			}
+			//remove this part into its own function ^^
 		}
 	}
 
@@ -453,7 +476,6 @@ public class Controller{
 //	System.out.println("Updated value of automaticBR: " + Controller.isAutomaticBR());
 
 
-	// ======================== TESTING CONTRADICTIONS ======================== \\
 	// In this example we add a negated node in the attitudes 2 , and we create a consistency between attitude 1 and 2
 	// We then add a node in attitude 1 that contradicts the negated node in attitude 2
 	// We then check if the contradiction is detected and it is hence the test is passed !
@@ -481,6 +503,7 @@ public class Controller{
 	//add consistency between attitude 1 and 2
 	controller.addConsistency(1, 2);
 
+	// ===================== TESTING CONTRADICTIONS ===================== \\
 	//Node test = negationTest.getNegation(); if(test == null) {System.out.println("null");} else{
 	//if(test.equals(M1)) {System.out.println("true");} else {System.out.println("false");}}
 	//Possible issue is the type casting of the variables into prop nodes , Figure out a fix.
