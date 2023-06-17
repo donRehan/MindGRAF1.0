@@ -31,7 +31,7 @@ public class Controller{
     private static ContextSet contextSet = new ContextSet(currContext);
     //private static ArrayList<BitSet> minimalNoGoods = new ArrayList<>();
     private static String conflictingContext = null;
-    private static PropositionNodeSet conflictingHyps;
+    private static PropositionNodeSet conflictingHyps = new PropositionNodeSet();
 	//Make it  final variable 
 	private static Hashtable<Integer, String > attitudeNames = new Hashtable<Integer, String>();
 	// set of  set  of ids of the attitudes and changed to final
@@ -223,13 +223,23 @@ public class Controller{
 		{
 			//System.out.println("Contradiction exists");
 			Integer id = p.getId();
-			//This is the node to compare the node with IE M1 from the Graph
-			PropositionNode contraictory_node = (PropositionNode) Network.getNodeById(id);
 			// Create a method for this functionality As it is repeated twice vv
 			for (int prop : PropositionNodeSet.getPropsSafely(propositionNodeSet)) {
 				try{
 				if (Network.getNodeById(prop).getNegation().equals(p)) {
-					System.out.println(Network.getNodeById(prop));
+			//		System.out.println(Network.getNodeById(prop));
+					//This is the node to compare the node with IE M1 from the Graph
+					PropositionNode node_negated_by_p = (PropositionNode) Network.getNodeById(prop);
+					//System.out.println(node_negated_by_p);
+					//Conflicting Hyps to be set to p and the node_negated_by_p
+					//System.out.println(conflictingHyps.size());
+					conflictingHyps.add(id);
+					conflictingHyps.add(node_negated_by_p.getId());
+					conflictingContext = c.getName();
+					//System.out.println(conflictingHyps.size());
+					resolveConflicts(att);
+					//escape the rest of this method
+					return;
 				}
 				}
 				catch(Exception e){
@@ -246,13 +256,17 @@ public class Controller{
 	//resolveConflicts();
 	public void resolveConflicts(Integer att){
 		//Print the conflicting context and the conflictingHyps
-		System.out.println("Conflict exists between context " + conflictingContext + " and the following propositions:");
+		System.out.println("Conflict exists in context " + conflictingContext + " and the following propositions:");
+		System.out.println();
 		for (int prop : PropositionNodeSet.getPropsSafely(conflictingHyps)) {
 			System.out.println(Network.getNodeById(prop).getName());
+			System.out.println("Id => " + prop);
+			System.out.println();
 		}
 		//Prompt the user to remove one of the propositions from the context
 		System.out.println("Please remove one of the propositions from the context");
 		//Scanner to get the user input
+		/*
 		Scanner sc = new Scanner(System.in);
 		//Get the user input
 		String input = sc.nextLine();
@@ -261,8 +275,9 @@ public class Controller{
 		//Close scanner
 		sc.close();
 		//Set the conflicting context to default and the conflictingHyps to null
-//		conflictingContext = "default";
-//		conflictingHyps = null;
+		conflictingContext = "default";
+		conflictingHyps = new PropositionNodeSet();
+		*/
 	}
 
 	//A helper method for consistencies_Props to add all the propositions of a propositionNodeSet to a unified propSet
@@ -446,7 +461,7 @@ public class Controller{
 	// M1 negates negationTest node
 	Node M1 = Network.createNode("propositionnode", new DownCableSet(dc, Min, Max));
 	Integer M1ID = negationTest.getId();
-	System.out.println("M1 Id: " + M1ID);
+	////System.out.println("M1 Id: " + M1ID);
 //	Integer M1Id = M1.getId();
 //	System.out.println("M1Id: " + M1Id);
 	// Above code generates the negation as in the figure 2.5
@@ -494,7 +509,7 @@ public class Controller{
 	pns2.add((PropositionNode) negationTest);
 	//Print negation testing id
 	Integer negationTestId = negationTest.getId();
-	System.out.println("NegationTestId: " + negationTestId);
+	//System.out.println("NegationTestId: " + negationTestId);
     pns2.add((PropositionNode)base4);
 	Hashtable<Integer, PropositionNodeSet> attitudes = new Hashtable<Integer, PropositionNodeSet>();
     attitudes.put(1, pns1);
