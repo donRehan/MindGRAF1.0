@@ -257,27 +257,29 @@ public class Controller{
 	public void resolveConflicts(Integer att){
 		//Print the conflicting context and the conflictingHyps
 		System.out.println("Conflict exists in context " + conflictingContext + " and the following propositions:");
-		System.out.println();
+		System.out.println("======================================================================");
 		for (int prop : PropositionNodeSet.getPropsSafely(conflictingHyps)) {
-			System.out.println(Network.getNodeById(prop).getName());
-			System.out.println("Id => " + prop);
-			System.out.println();
+			System.out.print(Network.getNodeById(prop).getName());System.out.println(", Id : " + prop);
 		}
 		//Prompt the user to remove one of the propositions from the context
 		System.out.println("Please remove one of the propositions from the context");
 		//Scanner to get the user input
-		/*
 		Scanner sc = new Scanner(System.in);
 		//Get the user input
 		String input = sc.nextLine();
+		//Print confirmation to the user of the deleted object
+		System.out.println("Proposition " + input + " has been removed from the context !");
 		//Remove the proposition from the context
+		//Check if the proposition with id input exists in the context if so print true
+		//System.out.println(contextSet.getContext(conflictingContext).getAttitude_propositions(att).contains(Integer.parseInt(input)));
 		contextSet.getContext(conflictingContext).remove_Prop(att, (PropositionNode) Network.getNodeById(Integer.parseInt(input)));
+		//Check if the proposition with id input exists in the context if so print true
+		//System.out.println(contextSet.getContext(conflictingContext).getAttitude_propositions(att).contains(Integer.parseInt(input)));
 		//Close scanner
 		sc.close();
 		//Set the conflicting context to default and the conflictingHyps to null
 		conflictingContext = "default";
 		conflictingHyps = new PropositionNodeSet();
-		*/
 	}
 
 	//A helper method for consistencies_Props to add all the propositions of a propositionNodeSet to a unified propSet
